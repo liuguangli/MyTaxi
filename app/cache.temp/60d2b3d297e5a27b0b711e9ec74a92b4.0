@@ -1,0 +1,15 @@
+http://httpbin.org/get
+GET
+0
+HTTP/1.1 200 OK
+10
+Connection: keep-alive
+Server: gunicorn/19.7.1
+Date: Sun, 23 Apr 2017 15:07:07 GMT
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Credentials: true
+Content-Length: 284
+Via: 1.1 vegur
+OkHttp-Sent-Millis: 1492960027708
+OkHttp-Received-Millis: 1492960028111
