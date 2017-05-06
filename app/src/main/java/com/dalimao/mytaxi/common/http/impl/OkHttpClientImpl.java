@@ -28,6 +28,7 @@ public class OkHttpClientImpl implements IHttpClient {
         /**
          *  解析业务参数
          */
+
         // 指定请求方式
         request.setMethod(IRequest.GET);
         // 解析头部

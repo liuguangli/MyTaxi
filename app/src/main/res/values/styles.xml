@@ -5,7 +5,63 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/color_dark_gray</item>
     </style>
+    <style name="Dialog">
+        <item name="android:colorBackground">?attr/colorBackgroundFloating</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowTitleStyle">
+            @style/RtlOverlay.DialogWindowTitle.AppCompat
+        </item>
+        <item name="android:windowTitleBackgroundStyle">
+            @style/Base.DialogWindowTitleBackground.AppCompat
+        </item>
+        <item name="android:windowBackground">
+            @drawable/abc_dialog_material_background
+        </item>
+        <item name="android:windowIsFloating">
+            true
+        </item>
+        <item name="android:backgroundDimEnabled">
+            true
+        </item>
+        <item name="android:windowAnimationStyle">
+            @style/Animation.AppCompat.Dialog
+        </item>
+        <item name="android:windowSoftInputMode">
+            stateUnspecified|adjustPan
+        </item>
+
+    </style>
+
+    <style name="Dialog.Title">
+        <item name="android:textColor">@color/color_text_dark</item>
+        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:padding">12dp</item>
+    </style>
+
+    <style name="Dialog.Input">
+        <item name="android:textSize">@dimen/text_size_normal</item>
+        <item name="android:textColorHint">@color/text_gray</item>
+
+    </style>
+
+    <style name="Dialog.InputWrapper">
+        <item name="android:background">@drawable/input_bottom_line</item>
+    </style>
+
+    <style name="Dialog.Button">
+        <item name="android:background">@drawable/btn_bg_selector</item>
+        <item name="android:textColor">@color/text_white</item>
+    </style>
+
+    <style name="Error">
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textColor">@color/error_red</item>
+    </style>
+    <style name="Loading"></style>
+    <style name="Tips"></style>
+
 
 </resources>
