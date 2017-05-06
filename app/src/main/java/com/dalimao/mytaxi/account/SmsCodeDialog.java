@@ -40,6 +40,9 @@ public class SmsCodeDialog extends Dialog  {
     private static final int SMS_SEND_FAIL = -1 ;
     private static final int SMS_CHECK_SUC = 2;
     private static final int SMS_CHECK_FAIL = -2;
+    private static final int USER_EXIST = 3;
+    private static final int USER_NOT_EXIST = -3;
+    private static final int SMS_SERVER_FAIL = 100;
     private String mPhone;
     private Button mResentBtn;
     private VerificationCodeInput mVerificationInput;
@@ -96,11 +99,24 @@ public class SmsCodeDialog extends Dialog  {
                 break;
                 case SmsCodeDialog.SMS_CHECK_SUC:
                     //验证码校验成功
-                    dialog.showVerifyState(false);
+                    dialog.showVerifyState(true);
                     break;
                 case SmsCodeDialog.SMS_CHECK_FAIL:
                     //验证码校验失败
                     dialog.showVerifyState(false);
+                    break;
+                case SmsCodeDialog.USER_EXIST:
+                    // 用户存在
+                    dialog.showUserExist(true);
+                    break;
+                case SmsCodeDialog.USER_NOT_EXIST:
+                    // 用户不存在
+                    dialog.showUserExist(false);
+                    break;
+                case SmsCodeDialog.SMS_SERVER_FAIL:
+                    // 服务器错误
+                    ToastUtil.show(dialog.getContext(),
+                            dialog.getContext().getString(R.string.error_server));
                     break;
             }
 
@@ -271,7 +287,7 @@ public class SmsCodeDialog extends Dialog  {
             mCountDownTimer.start();
         } else {
             ToastUtil.show(getContext(),
-                     getContext().getString(R.string.sms_send_fail));
+                    getContext().getString(R.string.sms_send_fail));
             mResentBtn.setEnabled(true);
             mResentBtn.setText(getContext().getString(R.string.resend));
             cancel();
@@ -293,8 +309,29 @@ public class SmsCodeDialog extends Dialog  {
 
             mErrorView.setVisibility(View.GONE);
             mLoading.setVisibility(View.VISIBLE);
-            //todo :检查用户是否存在
+            // 检查用户是否存在
+            new Thread() {
+                @Override
+                public void run() {
+                    String url = API.Config.getDomain() + API.CHECK_USER_EXIST;
+                    IRequest request = new BaseRequest(url);
+                    request.setBody("phone", mPhone);
+                    IResponse response = mHttpClient.get(request, false);
+                    Log.d(TAG, response.getData());
+                    if (response.getCode() == BaseResponse.STATE_OK) {
+                        BaseBizResponse bizRes =
+                                new Gson().fromJson(response.getData(), BaseBizResponse.class);
+                        if (bizRes.getCode() == BaseBizResponse.STATE_USER_EXIST) {
+                            mHandler.sendEmptyMessage(USER_EXIST);
+                        } else if (bizRes.getCode() == BaseBizResponse.STATE_USER_NOT_EXIST)  {
+                            mHandler.sendEmptyMessage(USER_NOT_EXIST);
+                        }
+                    } else {
+                        mHandler.sendEmptyMessage(SMS_SERVER_FAIL);
+                    }
 
+                }
+            }.start();
 
         }
     }
@@ -305,9 +342,10 @@ public class SmsCodeDialog extends Dialog  {
         mErrorView.setVisibility(View.GONE);
         dismiss();
         if (!exist) {
-            // todo 用户不存在,进入注册
-
-
+            // 用户不存在,进入注册
+            CreatePasswordDialog dialog =
+                    new CreatePasswordDialog(getContext(), mPhone);
+            dialog.show();
 
         } else {
             // todo 用户存在 ，进入登录

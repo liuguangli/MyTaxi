@@ -14,6 +14,12 @@ public class API {
     // 校验验证码
     public static final String CHECK_SMS_CODE =
             "/f34e28da5816433d/checkMsgCode?phone=${phone}&code=${code}" ;
+    // 注册
+    public static final String REGISTER = "/f34e28da5816433d/register";
+
+    // 检查用户是否存在
+    public static String CHECK_USER_EXIST =
+            "/f34e28da5816433d/isUserExist?phone=${phone}";
 
     /**
      *  配置域名信息
