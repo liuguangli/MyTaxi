@@ -8,6 +8,10 @@ package com.dalimao.mytaxi.common.http.biz;
 public class BaseBizResponse {
 
     public static final int STATE_OK = 200;
+    // 密码错误
+    public static final int STATE_PW_ERR = 100005;
+    // token 无效／过期
+    public static final int STATE_TOKEN_INVALID = 100006;
     // 用户已经存在
     public static int STATE_USER_EXIST = 100003;
     // 用户不存在

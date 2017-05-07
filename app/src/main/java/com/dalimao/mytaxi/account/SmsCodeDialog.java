@@ -348,8 +348,9 @@ public class SmsCodeDialog extends Dialog  {
             dialog.show();
 
         } else {
-            // todo 用户存在 ，进入登录
-
+            // 用户存在 ，进入登录
+            LoginDialog dialog = new LoginDialog(getContext(), mPhone);
+            dialog.show();
 
         }
     }
