@@ -1,4 +1,4 @@
-package com.dalimao.mytaxi.account;
+package com.dalimao.mytaxi.account.view;
 
 import android.app.Dialog;
 import android.content.Context;

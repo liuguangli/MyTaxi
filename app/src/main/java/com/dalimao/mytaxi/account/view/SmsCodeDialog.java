@@ -1,6 +1,5 @@
-package com.dalimao.mytaxi.account;
+package com.dalimao.mytaxi.account.view;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -27,7 +26,6 @@ import com.dalimao.mytaxi.common.util.ToastUtil;
 import com.google.gson.Gson;
 
 import java.lang.ref.SoftReference;
-import java.util.Map;
 
 
 /**

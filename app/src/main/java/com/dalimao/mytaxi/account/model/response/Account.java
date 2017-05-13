@@ -1,4 +1,4 @@
-package com.dalimao.mytaxi.account.response;
+package com.dalimao.mytaxi.account.model.response;
 
 /**
  * Created by liuguangli on 17/5/6.

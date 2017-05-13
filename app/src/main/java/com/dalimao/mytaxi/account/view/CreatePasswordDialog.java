@@ -1,4 +1,4 @@
-package com.dalimao.mytaxi.account;
+package com.dalimao.mytaxi.account.view;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -15,8 +15,8 @@ import android.widget.TextView;
 
 import com.dalimao.mytaxi.MyTaxiApplication;
 import com.dalimao.mytaxi.R;
-import com.dalimao.mytaxi.account.response.Account;
-import com.dalimao.mytaxi.account.response.LoginResponse;
+import com.dalimao.mytaxi.account.model.response.Account;
+import com.dalimao.mytaxi.account.model.response.LoginResponse;
 import com.dalimao.mytaxi.common.http.IHttpClient;
 import com.dalimao.mytaxi.common.http.IRequest;
 import com.dalimao.mytaxi.common.http.IResponse;
