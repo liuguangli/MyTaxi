@@ -8,5 +8,5 @@ public interface ILoginDialogPresenter {
     /**
      * 登录
      */
-    void reqeustLogin(String phone, String password);
+    void requestLogin(String phone, String password);
 }

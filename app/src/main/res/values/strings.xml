@@ -27,4 +27,5 @@
     <string name="login_suc">登录成功</string>
     <string name="password_error">密码错误</string>
     <string name="sms_send_fail">服务器异常，验证码未发送成功</string>
+    <string name="token_invalid">登录过期</string>
 </resources>

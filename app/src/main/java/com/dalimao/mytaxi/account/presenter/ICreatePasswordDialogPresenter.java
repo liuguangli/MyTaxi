@@ -8,7 +8,7 @@ public interface ICreatePasswordDialogPresenter {
     /**
      * 校验密码输入合法性
      */
-    void checkPw(String pw, String pw1);
+    boolean checkPw(String pw, String pw1);
     /**
      *  提交注册
      */
@@ -17,5 +17,5 @@ public interface ICreatePasswordDialogPresenter {
     /**
      * 登录
      */
-    void reqeustLogin(String phone, String pw);
+    void requestLogin(String phone, String pw);
 }
