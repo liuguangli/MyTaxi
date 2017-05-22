@@ -6,6 +6,10 @@ import android.util.Log;
 import com.dalimao.mytaxi.MyTaxiApplication;
 import com.dalimao.mytaxi.account.model.response.Account;
 import com.dalimao.mytaxi.account.model.response.LoginResponse;
+import com.dalimao.mytaxi.account.model.response.RegisterResponse;
+import com.dalimao.mytaxi.account.model.response.SmsCodeResponse;
+import com.dalimao.mytaxi.account.model.response.UserExistResponse;
+import com.dalimao.mytaxi.common.databus.RxBus;
 import com.dalimao.mytaxi.common.http.IHttpClient;
 import com.dalimao.mytaxi.common.http.IRequest;
 import com.dalimao.mytaxi.common.http.IResponse;
@@ -17,13 +21,14 @@ import com.dalimao.mytaxi.common.storage.SharedPreferencesDao;
 import com.dalimao.mytaxi.common.util.DevUtil;
 import com.google.gson.Gson;
 
+import rx.functions.Func1;
+
 /**
  * Created by liuguangli on 17/5/13.
  */
 
 public class AccountManagerImpl implements IAccountManager {
     private static final String TAG = "AccountManagerImpl";
-
 
 
     // 网络请求库
@@ -40,117 +45,129 @@ public class AccountManagerImpl implements IAccountManager {
     }
 
 
-    @Override
+   /* @Override
     public void setHandler(Handler handler) {
         this.handler = handler;
-    }
+    }*/
 
     /**
      * 获取验证码
+     *
      * @param phone
      */
     @Override
     public void fetchSMSCode(final String phone) {
-        new Thread() {
+
+
+        RxBus.getInstance().chainProcess(new Func1() {
             @Override
-            public void run() {
+            public Object call(Object o) {
+
                 String url = API.Config.getDomain() + API.GET_SMS_CODE;
                 IRequest request = new BaseRequest(url);
                 request.setBody("phone", phone);
                 IResponse response = httpClient.get(request, false);
                 Log.d(TAG, response.getData());
+                SmsCodeResponse smsCodeResponse = new SmsCodeResponse();
                 if (response.getCode() == BaseResponse.STATE_OK) {
                     BaseBizResponse bizRes =
                             new Gson().fromJson(response.getData(),
                                     BaseBizResponse.class);
                     if (bizRes.getCode() == BaseBizResponse.STATE_OK) {
-                        handler.sendEmptyMessage(SMS_SEND_SUC);
-                    } else  {
-                        handler.sendEmptyMessage(SMS_SEND_FAIL);
+                        smsCodeResponse.setCode(SMS_SEND_SUC);
+                    } else {
+                        smsCodeResponse.setCode(SMS_SEND_FAIL);
                     }
                 } else {
-                    handler.sendEmptyMessage(SMS_SEND_FAIL);
+                    smsCodeResponse.setCode(SMS_SEND_FAIL);
                 }
-
+                return smsCodeResponse;
             }
-        }.start();
+        });
     }
 
     /**
      * 校验验证码
+     *
      * @param phone
      * @param smsCode
      */
     @Override
     public void checkSmsCode(final String phone, final String smsCode) {
-        new Thread() {
+        RxBus.getInstance().chainProcess(new Func1() {
             @Override
-            public void run() {
+            public Object call(Object o) {
+
                 String url = API.Config.getDomain() + API.CHECK_SMS_CODE;
                 IRequest request = new BaseRequest(url);
                 request.setBody("phone", phone);
                 request.setBody("code", smsCode);
                 IResponse response = httpClient.get(request, false);
                 Log.d(TAG, response.getData());
+                SmsCodeResponse smsCodeResponse = new SmsCodeResponse();
+
                 if (response.getCode() == BaseResponse.STATE_OK) {
                     BaseBizResponse bizRes =
                             new Gson().fromJson(response.getData(), BaseBizResponse.class);
                     if (bizRes.getCode() == BaseBizResponse.STATE_OK) {
-                        handler.sendEmptyMessage(SMS_CHECK_SUC);
-                    } else  {
-                        handler.sendEmptyMessage(SMS_CHECK_FAIL);
+                        smsCodeResponse.setCode(SMS_CHECK_SUC);
+                    } else {
+                        smsCodeResponse.setCode(SMS_CHECK_FAIL);
                     }
                 } else {
-                    handler.sendEmptyMessage(SMS_CHECK_FAIL);
+                    smsCodeResponse.setCode(SMS_CHECK_FAIL);
                 }
-
+                return smsCodeResponse;
             }
-        }.start();
+        });
     }
 
     /**
      * 检查用户是否存在
+     *
      * @param phone
      */
     @Override
     public void checkUserExist(final String phone) {
 
-        new Thread() {
+        RxBus.getInstance().chainProcess(new Func1() {
             @Override
-            public void run() {
+            public Object call(Object o) {
                 String url = API.Config.getDomain() + API.CHECK_USER_EXIST;
                 IRequest request = new BaseRequest(url);
                 request.setBody("phone", phone);
                 IResponse response = httpClient.get(request, false);
                 Log.d(TAG, response.getData());
+                UserExistResponse existResponse = new UserExistResponse();
                 if (response.getCode() == BaseResponse.STATE_OK) {
                     BaseBizResponse bizRes =
                             new Gson().fromJson(response.getData(),
                                     BaseBizResponse.class);
                     if (bizRes.getCode() == BaseBizResponse.STATE_USER_EXIST) {
-                        handler.sendEmptyMessage(USER_EXIST);
+                        existResponse.setCode(USER_EXIST);
                     } else if (bizRes.getCode() ==
-                            BaseBizResponse.STATE_USER_NOT_EXIST)  {
-                        handler.sendEmptyMessage(USER_NOT_EXIST);
+                            BaseBizResponse.STATE_USER_NOT_EXIST) {
+                        existResponse.setCode(USER_NOT_EXIST);
                     }
                 } else {
-                    handler.sendEmptyMessage(SERVER_FAIL);
+                    existResponse.setCode(SERVER_FAIL);
                 }
-
+                return existResponse;
             }
-        }.start();
+        });
     }
 
     /**
      * 注册
+     *
      * @param phone
      * @param password
      */
     @Override
     public void register(String phone, final String password) {
-        new Thread() {
+        RxBus.getInstance().chainProcess(new Func1() {
             @Override
-            public void run() {
+            public Object call(Object o) {
                 String url = API.Config.getDomain() + API.REGISTER;
                 IRequest request = new BaseRequest(url);
                 request.setBody("phone", password);
@@ -159,34 +176,38 @@ public class AccountManagerImpl implements IAccountManager {
 
                 IResponse response = httpClient.post(request, false);
                 Log.d(TAG, response.getData());
+
+                RegisterResponse registerResponse = new RegisterResponse();
+
                 if (response.getCode() == BaseResponse.STATE_OK) {
                     BaseBizResponse bizRes =
                             new Gson().fromJson(response.getData(),
                                     BaseBizResponse.class);
                     if (bizRes.getCode() == BaseBizResponse.STATE_OK) {
-                        handler.sendEmptyMessage(REGISTER_SUC);
+                        registerResponse.setCode(REGISTER_SUC);
                     } else {
-                        handler.sendEmptyMessage(SERVER_FAIL);
+                        registerResponse.setCode(SERVER_FAIL);
                     }
                 } else {
-                    handler.sendEmptyMessage(SERVER_FAIL);
+                    registerResponse.setCode(SERVER_FAIL);
                 }
-
+                return registerResponse;
             }
-        }.start();
+        });
     }
 
     /**
      * 登录
+     *
      * @param phone
      * @param password
      */
     @Override
     public void login(String phone, final String password) {
 
-        new Thread() {
+        RxBus.getInstance().chainProcess(new Func1() {
             @Override
-            public void run() {
+            public Object call(Object o) {
                 String url = API.Config.getDomain() + API.LOGIN;
                 IRequest request = new BaseRequest(url);
                 request.setBody("phone", password);
@@ -195,27 +216,27 @@ public class AccountManagerImpl implements IAccountManager {
 
                 IResponse response = httpClient.post(request, false);
                 Log.d(TAG, response.getData());
+
+                LoginResponse bizRes = new LoginResponse();
                 if (response.getCode() == BaseResponse.STATE_OK) {
-                    LoginResponse bizRes =
-                            new Gson().fromJson(response.getData(), LoginResponse.class);
+                    bizRes = new Gson().fromJson(response.getData(), LoginResponse.class);
                     if (bizRes.getCode() == BaseBizResponse.STATE_OK) {
                         // 保存登录信息
                         Account account = bizRes.getData();
                         sharedPreferencesDao.save(SharedPreferencesDao.KEY_ACCOUNT, account);
-
                         // 通知 UI
-                        handler.sendEmptyMessage(LOGIN_SUC);
-                    } else if (bizRes.getCode() == BaseBizResponse.STATE_PW_ERR){
-                        handler.sendEmptyMessage(PW_ERROR);
+                        bizRes.setCode(LOGIN_SUC);
+                    } else if (bizRes.getCode() == BaseBizResponse.STATE_PW_ERR) {
+                        bizRes.setCode(PW_ERROR);
                     } else {
-                        handler.sendEmptyMessage(SERVER_FAIL);
+                        bizRes.setCode(SERVER_FAIL);
                     }
                 } else {
-                    handler.sendEmptyMessage(SERVER_FAIL);
+                    bizRes.setCode(SERVER_FAIL);
                 }
-
+                return bizRes;
             }
-        }.start();
+        });
     }
 
     /**
@@ -223,53 +244,58 @@ public class AccountManagerImpl implements IAccountManager {
      */
     @Override
     public void loginByToken() {
-        // 获取本地登录信息
-        final Account account =
-                (Account) sharedPreferencesDao.get(SharedPreferencesDao.KEY_ACCOUNT,
-                        Account.class);
+        RxBus.getInstance().chainProcess(new Func1() {
+            @Override
+            public Object call(Object o) {
+                // 获取本地登录信息
+                Account account =
+                        (Account) sharedPreferencesDao.get(SharedPreferencesDao.KEY_ACCOUNT,
+                                Account.class);
 
 
-        // 登录是否过期
-        boolean tokenValid = false;
+                // 登录是否过期
+                boolean tokenValid = false;
 
-        // 检查token是否过期
+                // 检查token是否过期
 
-        if (account != null) {
-            if (account.getExpired() > System.currentTimeMillis()) {
-                // token 有效
-                tokenValid = true;
-            }
-        }
-        if (!tokenValid) {
-            handler.sendEmptyMessage(TOKEN_INVALID);
-        } else {
-            // 请求网络，完成自动登录
-            new Thread() {
-                @Override
-                public void run() {
-                    String url = API.Config.getDomain() + API.LOGIN_BY_TOKEN;
-                    IRequest request = new BaseRequest(url);
-                    request.setBody("token", account.getToken());
-                    IResponse response = httpClient.post(request, false);
-                    Log.d(TAG, response.getData());
-                    if (response.getCode() == BaseResponse.STATE_OK) {
-                        LoginResponse bizRes =
-                                new Gson().fromJson(response.getData(), LoginResponse.class);
-                        if (bizRes.getCode() == BaseBizResponse.STATE_OK) {
-                            // 保存登录信息
-                            Account account = bizRes.getData();
-                            // todo: 加密存储
-                            sharedPreferencesDao.save(SharedPreferencesDao.KEY_ACCOUNT, account);
-                            handler.sendEmptyMessage(LOGIN_SUC);
-                        } if(bizRes.getCode() == BaseBizResponse.STATE_TOKEN_INVALID) {
-                            handler.sendEmptyMessage(TOKEN_INVALID);
-                        }
-                    } else {
-                        handler.sendEmptyMessage(SERVER_FAIL);
+                if (account != null) {
+                    if (account.getExpired() > System.currentTimeMillis()) {
+                        // token 有效
+                        tokenValid = true;
                     }
-
                 }
-            }.start();
-        }
+
+                LoginResponse loginResponse = new LoginResponse();
+                if (!tokenValid) {
+                    loginResponse.setCode(TOKEN_INVALID);
+                    return loginResponse;
+                }
+
+
+                // 请求网络，完成自动登录
+                String url = API.Config.getDomain() + API.LOGIN_BY_TOKEN;
+                IRequest request = new BaseRequest(url);
+                request.setBody("token", account.getToken());
+                IResponse response = httpClient.post(request, false);
+                Log.d(TAG, response.getData());
+                if (response.getCode() == BaseResponse.STATE_OK) {
+                    loginResponse =
+                            new Gson().fromJson(response.getData(), LoginResponse.class);
+                    if (loginResponse.getCode() == BaseBizResponse.STATE_OK) {
+                        // 保存登录信息
+                        account = loginResponse.getData();
+                        // todo: 加密存储
+                        sharedPreferencesDao.save(SharedPreferencesDao.KEY_ACCOUNT, account);
+                        loginResponse.setCode(LOGIN_SUC);
+                    } else
+                    if (loginResponse.getCode() == BaseBizResponse.STATE_TOKEN_INVALID) {
+                        loginResponse.setCode(TOKEN_INVALID);
+                    }
+                } else {
+                    loginResponse.setCode(SERVER_FAIL);
+                }
+                return loginResponse;
+            }
+        });
     }
 }

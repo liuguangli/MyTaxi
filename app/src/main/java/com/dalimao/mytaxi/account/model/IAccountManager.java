@@ -30,7 +30,9 @@ public interface IAccountManager {
      static final int PW_ERROR = -5;
     // 登录失效
      static final int TOKEN_INVALID = -6;
-    void setHandler(Handler handler);
+
+
+    /*void setHandler(Handler handler);*/
     /**
      *  下发验证码
      */

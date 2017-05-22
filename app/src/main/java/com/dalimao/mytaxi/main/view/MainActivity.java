@@ -1,5 +1,6 @@
 package com.dalimao.mytaxi.main.view;
 
+import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,7 @@ import com.dalimao.mytaxi.account.model.IAccountManager;
 import com.dalimao.mytaxi.account.view.PhoneInputDialog;
 import com.dalimao.mytaxi.account.model.response.Account;
 import com.dalimao.mytaxi.account.model.response.LoginResponse;
+import com.dalimao.mytaxi.common.databus.RxBus;
 import com.dalimao.mytaxi.common.http.IHttpClient;
 import com.dalimao.mytaxi.common.http.IRequest;
 import com.dalimao.mytaxi.common.http.IResponse;
@@ -48,8 +50,15 @@ public class MainActivity extends AppCompatActivity
                         SharedPreferencesDao.FILE_ACCOUNT);
         IAccountManager manager = new AccountManagerImpl(httpClient, dao);
         mPresenter = new MainPresenterImpl(this, manager);
+        RxBus.getInstance().register(mPresenter);
         mPresenter.loginByToken();
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RxBus.getInstance().unRegister(mPresenter);
     }
 
     /**
@@ -96,5 +105,11 @@ public class MainActivity extends AppCompatActivity
     private void showPhoneInputDialog() {
         PhoneInputDialog dialog = new PhoneInputDialog(this);
         dialog.show();
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                RxBus.getInstance().unRegister(mPresenter);
+            }
+        });
     }
 }

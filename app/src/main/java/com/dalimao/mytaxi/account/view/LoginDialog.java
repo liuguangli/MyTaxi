@@ -21,6 +21,7 @@ import com.dalimao.mytaxi.account.model.response.LoginResponse;
 import com.dalimao.mytaxi.account.presenter.ICreatePasswordDialogPresenter;
 import com.dalimao.mytaxi.account.presenter.ILoginDialogPresenter;
 import com.dalimao.mytaxi.account.presenter.LoginDialogPresenterImpl;
+import com.dalimao.mytaxi.common.databus.RxBus;
 import com.dalimao.mytaxi.common.http.IHttpClient;
 import com.dalimao.mytaxi.common.http.IRequest;
 import com.dalimao.mytaxi.common.http.IResponse;
@@ -86,12 +87,16 @@ public class LoginDialog extends Dialog implements ILoginView {
         setContentView(root);
         initViews();
 
+        // 注册 Presenter
+        RxBus.getInstance().register(mPresenter);
     }
+
 
     @Override
     public void dismiss() {
         super.dismiss();
-
+        // 注销 Presenter
+        RxBus.getInstance().unRegister(mPresenter);
     }
 
     private void initViews() {

@@ -14,6 +14,7 @@ import com.dalimao.mytaxi.account.model.AccountManagerImpl;
 import com.dalimao.mytaxi.account.model.IAccountManager;
 import com.dalimao.mytaxi.account.presenter.CreatePasswordDialogPresenterImpl;
 import com.dalimao.mytaxi.account.presenter.ICreatePasswordDialogPresenter;
+import com.dalimao.mytaxi.common.databus.RxBus;
 import com.dalimao.mytaxi.common.http.IHttpClient;
 import com.dalimao.mytaxi.common.http.impl.OkHttpClientImpl;
 import com.dalimao.mytaxi.common.storage.SharedPreferencesDao;
@@ -47,7 +48,9 @@ public class CreatePasswordDialog extends Dialog implements ICreatePasswordDialo
         IAccountManager accountManager =  new AccountManagerImpl(httpClient, dao);
         mPresenter = new CreatePasswordDialogPresenterImpl(this, accountManager);
 
+
     }
+
 
     public CreatePasswordDialog(Context context, int theme) {
         super(context, theme);
@@ -68,7 +71,18 @@ public class CreatePasswordDialog extends Dialog implements ICreatePasswordDialo
         View root = inflater.inflate(R.layout.dialog_create_pw, null);
         setContentView(root);
         initViews();
+
+        //注册 presenter
+        RxBus.getInstance().register(mPresenter);
     }
+
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        // 注销 presenter
+        RxBus.getInstance().unRegister(mPresenter);
+    }
+
 
     private void initViews() {
         mPhone = (TextView) findViewById(R.id.phone);
@@ -93,11 +107,7 @@ public class CreatePasswordDialog extends Dialog implements ICreatePasswordDialo
 
     }
 
-    @Override
-    public void dismiss() {
-        super.dismiss();
 
-    }
 
     /**
      * 提交注册

@@ -53,7 +53,7 @@ public class RxBusTest {
 /**
  *  模拟 Presenter
  */
-class Presenter implements DataBusSubscriber {
+class Presenter  {
     private Manager manager;
 
     public Presenter(Manager manager) {
@@ -68,20 +68,18 @@ class Presenter implements DataBusSubscriber {
         manager.getOrder();
     }
 
-    /**
-     * 实现 DataBusSubscriber 接口，接收数据
-     * @param data
-     */
-    @Override
-    public void onEvent(Object data) {
-        if (data instanceof User) {
-            Log.d(RxBusTest.TAG , "receive User in thread:" + Thread.currentThread());
-        }  else if (data instanceof Order ) {
-            Log.d(RxBusTest.TAG , "receive Order :" + Thread.currentThread());
-        } else {
-            Log.d(RxBusTest.TAG , "receive data :" + Thread.currentThread());
-        }
+
+
+    @RegisterBus
+    public void onUser(User user) {
+        Log.d(RxBusTest.TAG , "receive User in thread:" + Thread.currentThread());
     }
+
+    @RegisterBus
+    public void onOrder(Order order) {
+        Log.d(RxBusTest.TAG , "receive order in thread:" + Thread.currentThread());
+    }
+
 }
 
 /**
