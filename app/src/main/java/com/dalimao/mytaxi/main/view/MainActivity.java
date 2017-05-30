@@ -7,47 +7,26 @@ import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.RadioGroup;
+import android.view.ViewGroup;
 
-import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationClient;
-import com.amap.api.location.AMapLocationClientOption;
-import com.amap.api.location.AMapLocationListener;
-import com.amap.api.maps2d.AMap;
-import com.amap.api.maps2d.CameraUpdate;
-import com.amap.api.maps2d.CameraUpdateFactory;
-import com.amap.api.maps2d.LocationSource;
-import com.amap.api.maps2d.MapView;
-import com.amap.api.maps2d.model.BitmapDescriptor;
-import com.amap.api.maps2d.model.BitmapDescriptorFactory;
-import com.amap.api.maps2d.model.CameraPosition;
-import com.amap.api.maps2d.model.LatLng;
-import com.amap.api.maps2d.model.Marker;
-import com.amap.api.maps2d.model.MarkerOptions;
-import com.amap.api.maps2d.model.MyLocationStyle;
 import com.dalimao.mytaxi.MyTaxiApplication;
 import com.dalimao.mytaxi.R;
 import com.dalimao.mytaxi.account.model.AccountManagerImpl;
 import com.dalimao.mytaxi.account.model.IAccountManager;
 import com.dalimao.mytaxi.account.view.PhoneInputDialog;
-import com.dalimao.mytaxi.account.model.response.Account;
-import com.dalimao.mytaxi.account.model.response.LoginResponse;
+
 import com.dalimao.mytaxi.common.databus.RxBus;
 import com.dalimao.mytaxi.common.http.IHttpClient;
-import com.dalimao.mytaxi.common.http.IRequest;
-import com.dalimao.mytaxi.common.http.IResponse;
-import com.dalimao.mytaxi.common.http.api.API;
-import com.dalimao.mytaxi.common.http.biz.BaseBizResponse;
-import com.dalimao.mytaxi.common.http.impl.BaseRequest;
-import com.dalimao.mytaxi.common.http.impl.BaseResponse;
 import com.dalimao.mytaxi.common.http.impl.OkHttpClientImpl;
+import com.dalimao.mytaxi.common.lbs.GaodeLbsLayerImpl;
+import com.dalimao.mytaxi.common.lbs.ILbsLayer;
+import com.dalimao.mytaxi.common.lbs.LocationInfo;
 import com.dalimao.mytaxi.common.storage.SharedPreferencesDao;
 import com.dalimao.mytaxi.common.util.SensorEventHelper;
 import com.dalimao.mytaxi.common.util.ToastUtil;
 import com.dalimao.mytaxi.main.presenter.IMainPresenter;
 import com.dalimao.mytaxi.main.presenter.MainPresenterImpl;
-import com.google.gson.Gson;
+
 
 
 /** －－－ 登录逻辑－－－
@@ -65,14 +44,9 @@ public class MainActivity extends AppCompatActivity
         implements  IMainView {
     private final static String TAG = "MainActivity";
     private IMainPresenter mPresenter;
-    private MapView mapView;
-    private AMap aMap;
-    private LocationSource.OnLocationChangedListener mListener;
-    private AMapLocationClient mlocationClient;
-    private AMapLocationClientOption mLocationOption;
-    private Marker mLocMarker;
+    private ILbsLayer mLbsLayer;
     private SensorEventHelper mSensorHelper;
-    private boolean mFirst = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,144 +61,33 @@ public class MainActivity extends AppCompatActivity
         RxBus.getInstance().register(mPresenter);
         mPresenter.loginByToken();
 
-        mapView = (MapView) findViewById(R.id.map);
-        mapView.onCreate(savedInstanceState);// 此方法必须重写
-        init();
-        mSensorHelper = new SensorEventHelper(this);
-        mSensorHelper.registerSensorListener();
-    }
-    /**
-     * 初始化AMap对象
-     */
-    private void init() {
-        if (aMap == null) {
-            aMap = mapView.getMap();
-            // 设置 Map 相关属性
-            setUpMap();
-        }
-
-
-    }
-    /**
-     * 设置一些amap的属性
-     */
-    private void setUpMap() {
-        // 自定义系统定位小蓝点
-        MyLocationStyle myLocationStyle = new MyLocationStyle();
-        myLocationStyle.myLocationIcon(BitmapDescriptorFactory
-                .fromResource(R.drawable.start));// 设置小蓝点的图标
-        myLocationStyle.strokeColor(Color.BLACK);// 设置圆形的边框颜色
-        myLocationStyle.radiusFillColor(Color.argb(100, 0, 0, 180));// 设置圆形的填充颜色
-        // myLocationStyle.anchor(int,int)//设置小蓝点的锚点
-        myLocationStyle.strokeWidth(1.0f);// 设置圆形的边框粗细
-        aMap.setMyLocationStyle(myLocationStyle);
-        aMap.setLocationSource(new LocationSource() {
+        // 地图服务
+        mLbsLayer = new GaodeLbsLayerImpl(this);
+        mLbsLayer.onCreate(savedInstanceState);
+        mLbsLayer.setLocationChangeListener(new ILbsLayer.CommonLocationChangeListener() {
             @Override
-            public void activate(OnLocationChangedListener onLocationChangedListener) {
-                doActivate(onLocationChangedListener);
+            public void onLocationChanged(LocationInfo locationInfo) {
+
             }
 
             @Override
-            public void deactivate() {
-                doDeactivate();
+            public void onLocation(LocationInfo locationInfo) {
+                // 首次定位，添加当前位置的标记
+                mLbsLayer.addOrUpdateMarker(locationInfo, BitmapFactory.decodeResource(getResources(), R.drawable.navi_map_gps_locked));
             }
-        });// 设置定位监听
-        aMap.getUiSettings().setMyLocationButtonEnabled(true);// 设置默认定位按钮是否显示
-        aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
-        // aMap.setMyLocationType()
-    }
-    /**
-     * 激活定位
-     */
-
-    public void doActivate(LocationSource.OnLocationChangedListener listener) {
-        mListener = listener;
-        if (mlocationClient == null) {
-            // 初始化定位
-            mlocationClient = new AMapLocationClient(this);
-            mLocationOption = new AMapLocationClientOption();
-            //设置定位监听
-            mlocationClient.setLocationListener(new AMapLocationListener() {
-                @Override
-                public void onLocationChanged(AMapLocation aMapLocation) {
-                    if (aMapLocation != null
-                            && aMapLocation.getErrorCode() == 0) {
-                        mListener.onLocationChanged(aMapLocation);// 显示系统小蓝点
-
-
-                        if (mFirst) {
-                            mFirst = false;
-                            LatLng latLng = new LatLng(aMapLocation.getLatitude(),
-                                    aMapLocation.getLongitude());
-
-                            CameraUpdate up = CameraUpdateFactory.newCameraPosition(new CameraPosition(
-                                    latLng , 18, 30, 30));
-                            aMap.moveCamera(up);
-                            addMyMarker(latLng);
-
-                        }
-
-
-                    } else {
-                        String errText = "定位失败," + aMapLocation.getErrorCode()+ ": " + aMapLocation.getErrorInfo();
-                        Log.e("AmapErr",errText);
-                    }
-                }
-            });
-            //设置为高精度定位模式
-            mLocationOption.setLocationMode(
-                    AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-            //设置定位参数
-            mlocationClient.setLocationOption(mLocationOption);
-            // 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
-            // 注意设置合适的定位时间的间隔（最小间隔支持为2000ms），并且在合适时间调用stopLocation()方法来取消定位请求
-            // 在定位结束后，在合适的生命周期调用onDestroy()方法
-            // 在单次定位情况下，定位无论成功与否，都无需调用stopLocation()方法移除请求，定位sdk内部会移除
-            mlocationClient.startLocation();
-        }
-
+        });
+        ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.activity_main);
+        mapViewContainer.addView(mLbsLayer.getMapView());
 
     }
 
-    /**
-     *  添加自己位置的 Marker
-     *
-     * @param latlng
-     */
-    private void addMyMarker(LatLng latlng) {
-        if (mLocMarker != null) {
-            return;
-        }
-        Bitmap bMap = BitmapFactory.decodeResource(this.getResources(),
-                R.drawable.navi_map_gps_locked);
-        BitmapDescriptor des = BitmapDescriptorFactory.fromBitmap(bMap);
-//		BitmapDescriptor des = BitmapDescriptorFactory.fromResource(R.drawable.navi_map_gps_locked);
-        MarkerOptions options = new MarkerOptions();
-        options.icon(des);
-        options.anchor(0.5f, 0.5f);
-        options.position(latlng);
-        mLocMarker = aMap.addMarker(options);
-        mSensorHelper.setCurrentMarker(mLocMarker);
-    }
-    /**
-     * 停止定位
-     */
-
-    public void doDeactivate() {
-        mListener = null;
-        if (mlocationClient != null) {
-            mlocationClient.stopLocation();
-            mlocationClient.onDestroy();
-        }
-        mlocationClient = null;
-    }
     /**
      * 方法必须重写
      */
     @Override
     protected void onResume() {
         super.onResume();
-        mapView.onResume();
+        mLbsLayer.onResume();
     }
 
     /**
@@ -233,7 +96,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        mapView.onPause();
+        mLbsLayer.onPause();
     }
 
     /**
@@ -242,7 +105,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
+        mLbsLayer.onSaveInstanceState(outState);
     }
 
     /**
@@ -252,7 +115,7 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         RxBus.getInstance().unRegister(mPresenter);
-        mapView.onDestroy();
+        mLbsLayer.onDestroy();
     }
 
     /**

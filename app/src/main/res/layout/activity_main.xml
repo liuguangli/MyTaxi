@@ -5,8 +5,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.dalimao.mytaxi.main.view.MainActivity">
-    <com.amap.api.maps2d.MapView
-        android:id="@+id/map"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+
 </RelativeLayout>
