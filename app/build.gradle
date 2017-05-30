@@ -17,6 +17,21 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    signingConfigs {
+        release{
+            storeFile file("keystore/release.jks")
+            storePassword "111111"
+            keyAlias "release"
+            keyPassword "111111"
+        }
+        debug{
+            storeFile file("keystore/debug.jks")
+            storePassword "111111"
+            keyAlias "debug"
+            keyPassword "111111"
+        }
+
+    }
 
 }
 
