@@ -66,6 +66,8 @@
             ver:box_bg_focus="@drawable/verification_edit_bg_focus"
             ver:child_h_padding="5dp"
             ver:inputType="number"
+            ver:child_width="60dp"
+            ver:child_height="60dp"
             android:layout_centerInParent="true"
             android:id="@+id/verificationCodeInput"
 
