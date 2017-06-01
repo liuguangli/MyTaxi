@@ -47,4 +47,9 @@ dependencies {
     compile ('com.github.liuguangli:VerificationCodeInput:1.4')
     compile 'io.reactivex:rxjava:1.0.14'
     compile 'io.reactivex:rxandroid:1.0.1'
+
+
+    //bmob-push：Bmob的推送包
+    compile 'cn.bmob.android:bmob-push:0.8'
+    compile 'cn.bmob.android:bmob-sdk:3.4.2'
 }

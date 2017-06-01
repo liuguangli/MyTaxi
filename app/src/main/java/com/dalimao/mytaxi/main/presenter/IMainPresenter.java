@@ -1,5 +1,7 @@
 package com.dalimao.mytaxi.main.presenter;
 
+import com.dalimao.mytaxi.common.lbs.LocationInfo;
+
 /**
  * Created by liuguangli on 17/5/14.
  */
@@ -13,4 +15,6 @@ public interface IMainPresenter {
      * @param longitude
      */
     void fetchNearDrivers(double latitude, double longitude);
+
+
 }

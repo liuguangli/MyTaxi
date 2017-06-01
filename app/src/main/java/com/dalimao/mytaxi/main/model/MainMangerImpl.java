@@ -7,6 +7,8 @@ import com.dalimao.mytaxi.common.http.IResponse;
 import com.dalimao.mytaxi.common.http.api.API;
 import com.dalimao.mytaxi.common.http.biz.BaseBizResponse;
 import com.dalimao.mytaxi.common.http.impl.BaseRequest;
+import com.dalimao.mytaxi.common.lbs.LocationInfo;
+import com.dalimao.mytaxi.common.util.LogUtil;
 import com.dalimao.mytaxi.main.model.response.NearDriversResponse;
 import com.google.gson.Gson;
 
@@ -17,6 +19,7 @@ import rx.functions.Func1;
  */
 
 public class MainMangerImpl implements IMainManager{
+    private static final String TAG = "MainMangerImpl";
     IHttpClient mHttpClient;
 
     public MainMangerImpl(IHttpClient mHttpClient) {
@@ -50,4 +53,5 @@ public class MainMangerImpl implements IMainManager{
             }
         });
     }
+
 }

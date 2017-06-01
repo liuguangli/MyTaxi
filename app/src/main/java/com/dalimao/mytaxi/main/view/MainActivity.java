@@ -17,6 +17,7 @@ import com.dalimao.mytaxi.account.view.PhoneInputDialog;
 
 import com.dalimao.mytaxi.common.databus.RxBus;
 import com.dalimao.mytaxi.common.http.IHttpClient;
+import com.dalimao.mytaxi.common.http.api.API;
 import com.dalimao.mytaxi.common.http.impl.OkHttpClientImpl;
 import com.dalimao.mytaxi.common.lbs.GaodeLbsLayerImpl;
 import com.dalimao.mytaxi.common.lbs.ILbsLayer;
@@ -30,6 +31,10 @@ import com.dalimao.mytaxi.main.presenter.IMainPresenter;
 import com.dalimao.mytaxi.main.presenter.MainPresenterImpl;
 
 import java.util.List;
+
+import cn.bmob.push.BmobPush;
+import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobInstallation;
 
 
 /** －－－ 登录逻辑－－－
@@ -52,7 +57,7 @@ public class MainActivity extends AppCompatActivity
     private ILbsLayer mLbsLayer;
     private SensorEventHelper mSensorHelper;
     private Bitmap mDriverBit;
-
+    private String mPushKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,12 +90,24 @@ public class MainActivity extends AppCompatActivity
                                 R.drawable.navi_map_gps_locked));
                 // 获取附近司机
                 getNearDrivers(locationInfo.getLatitude(), locationInfo.getLongitude());
+                // 上报位置
             }
         });
         ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.activity_main);
         mapViewContainer.addView(mLbsLayer.getMapView());
 
+        // 推送服务
+        // 初始化BmobSDK
+        Bmob.initialize(this, API.Config.getAppId());
+        // 使用推送服务时的初始化操作
+        BmobInstallation installation = BmobInstallation.getCurrentInstallation(this);
+        installation.save();
+        mPushKey = installation.getInstallationId();
+        // 启动推送服务
+        BmobPush.startWork(this);
     }
+
+
 
     /**
      * 获取附近司机
@@ -162,6 +179,8 @@ public class MainActivity extends AppCompatActivity
             mLbsLayer.addOrUpdateMarker(locationInfo, mDriverBit);
         }
     }
+
+
 
     /**
      * 显示 loading

@@ -17,4 +17,6 @@ public interface IMainView extends IView {
      * @param data
      */
     void showNears(List<LocationInfo> data);
+
+
 }

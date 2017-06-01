@@ -74,15 +74,17 @@ public class RxBus {
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object data) {
-                        Log.d(TAG, "chainProcess start");
+                        if (data == null) {
+                            return;
+                        }
                         for (Object subscriber : subscribers) {
                             // 扫描注解，将数据发送到注册的对象的标记方法
                             callMethodByAnnotiation(subscriber, data);
                         }
-
                     }
                 });
     }
+
 
     /**
      * 反射获取对象方法列表，判断：

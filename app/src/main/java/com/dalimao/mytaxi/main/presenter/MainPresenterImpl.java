@@ -6,11 +6,13 @@ import com.dalimao.mytaxi.account.model.IAccountManager;
 import com.dalimao.mytaxi.account.model.response.LoginResponse;
 import com.dalimao.mytaxi.common.databus.RegisterBus;
 import com.dalimao.mytaxi.common.http.biz.BaseBizResponse;
+import com.dalimao.mytaxi.common.lbs.LocationInfo;
 import com.dalimao.mytaxi.main.model.IMainManager;
 import com.dalimao.mytaxi.main.model.response.NearDriversResponse;
 import com.dalimao.mytaxi.main.view.IMainView;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 /**
  * Created by liuguangli on 17/5/14.
@@ -84,6 +86,8 @@ public class MainPresenterImpl implements IMainPresenter {
     }
 
 
+
+
     public MainPresenterImpl(IMainView view,
                              IAccountManager accountManager,
                              IMainManager mainManager) {
@@ -104,4 +108,5 @@ public class MainPresenterImpl implements IMainPresenter {
         mainManager.fetchNearDrivers(latitude, longitude);
 
     }
+
 }
