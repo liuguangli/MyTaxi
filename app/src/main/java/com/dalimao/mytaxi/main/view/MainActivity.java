@@ -24,9 +24,12 @@ import com.dalimao.mytaxi.common.lbs.LocationInfo;
 import com.dalimao.mytaxi.common.storage.SharedPreferencesDao;
 import com.dalimao.mytaxi.common.util.SensorEventHelper;
 import com.dalimao.mytaxi.common.util.ToastUtil;
+import com.dalimao.mytaxi.main.model.IMainManager;
+import com.dalimao.mytaxi.main.model.MainMangerImpl;
 import com.dalimao.mytaxi.main.presenter.IMainPresenter;
 import com.dalimao.mytaxi.main.presenter.MainPresenterImpl;
 
+import java.util.List;
 
 
 /** －－－ 登录逻辑－－－
@@ -38,6 +41,8 @@ import com.dalimao.mytaxi.main.presenter.MainPresenterImpl;
  *  1 地图接入
  *  2 定位自己的位置，显示蓝点
  *  3 使用 Marker 标记当前位置和方向
+ *  4 地图封装
+ *  ------获取附近司机---
  *
  */
 public class MainActivity extends AppCompatActivity
@@ -46,6 +51,7 @@ public class MainActivity extends AppCompatActivity
     private IMainPresenter mPresenter;
     private ILbsLayer mLbsLayer;
     private SensorEventHelper mSensorHelper;
+    private Bitmap mDriverBit;
 
 
     @Override
@@ -57,7 +63,8 @@ public class MainActivity extends AppCompatActivity
                 new SharedPreferencesDao(MyTaxiApplication.getInstance(),
                         SharedPreferencesDao.FILE_ACCOUNT);
         IAccountManager manager = new AccountManagerImpl(httpClient, dao);
-        mPresenter = new MainPresenterImpl(this, manager);
+        IMainManager mainManager = new MainMangerImpl(httpClient);
+        mPresenter = new MainPresenterImpl(this, manager, mainManager);
         RxBus.getInstance().register(mPresenter);
         mPresenter.loginByToken();
 
@@ -73,12 +80,26 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onLocation(LocationInfo locationInfo) {
                 // 首次定位，添加当前位置的标记
-                mLbsLayer.addOrUpdateMarker(locationInfo, BitmapFactory.decodeResource(getResources(), R.drawable.navi_map_gps_locked));
+                mLbsLayer.addOrUpdateMarker(locationInfo,
+                        BitmapFactory.decodeResource(getResources(),
+                                R.drawable.navi_map_gps_locked));
+                // 获取附近司机
+                getNearDrivers(locationInfo.getLatitude(), locationInfo.getLongitude());
             }
         });
         ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.activity_main);
         mapViewContainer.addView(mLbsLayer.getMapView());
 
+    }
+
+    /**
+     * 获取附近司机
+     * @param latitude
+     * @param longitude
+     */
+    private void getNearDrivers(double latitude, double longitude) {
+
+        mPresenter.fetchNearDrivers(latitude, longitude);
     }
 
     /**
@@ -125,6 +146,21 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void showLoginSuc() {
         ToastUtil.show(this, getString(R.string.login_suc));
+    }
+
+    /**
+     * 显示附近司机
+     * @param data
+     */
+
+    @Override
+    public void showNears(List<LocationInfo> data) {
+        if (mDriverBit == null || mDriverBit.isRecycled()) {
+            mDriverBit = BitmapFactory.decodeResource(getResources(), R.drawable.car);
+        }
+        for (LocationInfo locationInfo : data) {
+            mLbsLayer.addOrUpdateMarker(locationInfo, mDriverBit);
+        }
     }
 
     /**

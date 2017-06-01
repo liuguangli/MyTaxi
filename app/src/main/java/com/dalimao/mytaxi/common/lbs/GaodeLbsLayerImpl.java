@@ -35,7 +35,7 @@ import static android.R.attr.rotation;
 
 public class GaodeLbsLayerImpl implements ILbsLayer {
     private static final String TAG = "GaodeLbsLayerImpl";
-    private static final int KEY_MY_MARKERE = 1000;
+    private static final String KEY_MY_MARKERE = "1000";
     private Context mContext;
     //位置定位对象
     private AMapLocationClient mlocationClient;
@@ -51,7 +51,7 @@ public class GaodeLbsLayerImpl implements ILbsLayer {
     private CommonLocationChangeListener mLocationChangeListener;
     private MyLocationStyle myLocationStyle;
     // 管理地图标记集合
-    private Map<Integer, Marker> markerMap = new HashMap<>();
+    private Map<String, Marker> markerMap = new HashMap<>();
     public GaodeLbsLayerImpl(Context context) {
         // 创建地图对象
         mapView = new MapView(context);
@@ -94,7 +94,7 @@ public class GaodeLbsLayerImpl implements ILbsLayer {
 
     @Override
     public void addOrUpdateMarker(LocationInfo locationInfo, Bitmap bitmap) {
-        Marker storedMarker = markerMap.get(locationInfo.getId());
+        Marker storedMarker = markerMap.get(locationInfo.getKey());
         LatLng latLng = new LatLng(locationInfo.getLatitude(),
                 locationInfo.getLongitude());
         if (storedMarker != null) {
@@ -110,8 +110,8 @@ public class GaodeLbsLayerImpl implements ILbsLayer {
             options.position(latLng);
             Marker marker = aMap.addMarker(options);
             marker.setRotateAngle(rotation);
-            markerMap.put(locationInfo.getId(), marker);
-            if (locationInfo.getId() == KEY_MY_MARKERE) {
+            markerMap.put(locationInfo.getKey(), marker);
+            if (KEY_MY_MARKERE.equals(locationInfo.getKey())) {
                 // 传感器控制我的位置标记的旋转角度
                 mSensorHelper.setCurrentMarker(marker);
             }
@@ -174,14 +174,14 @@ public class GaodeLbsLayerImpl implements ILbsLayer {
                     LocationInfo locationInfo = new LocationInfo(aMapLocation.getLatitude(),
                             aMapLocation.getLongitude());
                     locationInfo.setName(aMapLocation.getPoiName());
-                    locationInfo.setId(KEY_MY_MARKERE);
+                    locationInfo.setKey(KEY_MY_MARKERE);
                     if (firstLocation) {
                         firstLocation = false;
                         LatLng latLng = new LatLng(aMapLocation.getLatitude(),
                                 aMapLocation.getLongitude());
 
                         CameraUpdate up = CameraUpdateFactory.newCameraPosition(new CameraPosition(
-                                latLng , 18, 30, 30));
+                                latLng , 17, 30, 30));
                         aMap.moveCamera(up);
                         if (mLocationChangeListener != null) {
 

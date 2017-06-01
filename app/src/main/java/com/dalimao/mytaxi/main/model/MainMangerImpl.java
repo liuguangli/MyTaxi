@@ -1,0 +1,53 @@
+package com.dalimao.mytaxi.main.model;
+
+import com.dalimao.mytaxi.common.databus.RxBus;
+import com.dalimao.mytaxi.common.http.IHttpClient;
+import com.dalimao.mytaxi.common.http.IRequest;
+import com.dalimao.mytaxi.common.http.IResponse;
+import com.dalimao.mytaxi.common.http.api.API;
+import com.dalimao.mytaxi.common.http.biz.BaseBizResponse;
+import com.dalimao.mytaxi.common.http.impl.BaseRequest;
+import com.dalimao.mytaxi.main.model.response.NearDriversResponse;
+import com.google.gson.Gson;
+
+import rx.functions.Func1;
+
+/**
+ * Created by liuguangli on 17/5/31.
+ */
+
+public class MainMangerImpl implements IMainManager{
+    IHttpClient mHttpClient;
+
+    public MainMangerImpl(IHttpClient mHttpClient) {
+        this.mHttpClient = mHttpClient;
+    }
+
+    @Override
+    public void fetchNearDrivers(final double latitude, final double longitude) {
+
+        RxBus.getInstance().chainProcess(new Func1() {
+            @Override
+            public Object call(Object o) {
+                IRequest request = new BaseRequest(API.Config.getDomain()
+                        + API.GET_NEAR_DRIVERS);
+                request.setBody("latitude", new Double(latitude).toString() );
+                request.setBody("longitude", new Double(longitude).toString() );
+                IResponse response = mHttpClient.get(request, false);
+                if (response.getCode() == BaseBizResponse.STATE_OK) {
+
+                    try {
+                        NearDriversResponse nearDriversResponse =
+                                new Gson().fromJson(response.getData(),
+                                        NearDriversResponse.class);
+
+                        return nearDriversResponse;
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }
+                return null;
+            }
+        });
+    }
+}

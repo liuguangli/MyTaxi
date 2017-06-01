@@ -6,4 +6,11 @@ package com.dalimao.mytaxi.main.presenter;
 
 public interface IMainPresenter {
     void loginByToken();
+
+    /**
+     * 获取附近司机
+     * @param latitude
+     * @param longitude
+     */
+    void fetchNearDrivers(double latitude, double longitude);
 }

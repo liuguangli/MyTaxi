@@ -5,6 +5,9 @@ import android.os.Message;
 import com.dalimao.mytaxi.account.model.IAccountManager;
 import com.dalimao.mytaxi.account.model.response.LoginResponse;
 import com.dalimao.mytaxi.common.databus.RegisterBus;
+import com.dalimao.mytaxi.common.http.biz.BaseBizResponse;
+import com.dalimao.mytaxi.main.model.IMainManager;
+import com.dalimao.mytaxi.main.model.response.NearDriversResponse;
 import com.dalimao.mytaxi.main.view.IMainView;
 
 import java.lang.ref.WeakReference;
@@ -17,6 +20,7 @@ public class MainPresenterImpl implements IMainPresenter {
 
     private IMainView view;
     private IAccountManager accountManager;
+    private IMainManager mainManager;
     /**
      * 接收子线程消息的 Handler
      */
@@ -72,15 +76,32 @@ public class MainPresenterImpl implements IMainPresenter {
                 break;
         }
     }
+    @RegisterBus
+    public void onNearDriversResponse(NearDriversResponse response){
+        if (response.getCode() == BaseBizResponse.STATE_OK) {
+            view.showNears(response.getData());
+        }
+    }
 
-    public MainPresenterImpl(IMainView view, IAccountManager accountManager) {
+
+    public MainPresenterImpl(IMainView view,
+                             IAccountManager accountManager,
+                             IMainManager mainManager) {
         this.view = view;
         this.accountManager = accountManager;
+        this.mainManager = mainManager;
 
     }
 
     @Override
     public void loginByToken() {
         accountManager.loginByToken();
+    }
+
+    @Override
+    public void fetchNearDrivers(double latitude, double longitude) {
+
+        mainManager.fetchNearDrivers(latitude, longitude);
+
     }
 }
