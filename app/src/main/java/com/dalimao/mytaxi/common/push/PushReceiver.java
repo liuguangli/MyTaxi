@@ -3,15 +3,8 @@ package com.dalimao.mytaxi.common.push;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-
-import com.dalimao.mytaxi.common.databus.RxBus;
-import com.dalimao.mytaxi.common.lbs.LocationInfo;
 import com.dalimao.mytaxi.common.util.LogUtil;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import cn.bmob.push.PushConstants;
 

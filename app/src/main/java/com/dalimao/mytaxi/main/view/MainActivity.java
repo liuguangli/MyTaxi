@@ -90,7 +90,6 @@ public class MainActivity extends AppCompatActivity
                                 R.drawable.navi_map_gps_locked));
                 // 获取附近司机
                 getNearDrivers(locationInfo.getLatitude(), locationInfo.getLongitude());
-                // 上报位置
             }
         });
         ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.activity_main);
