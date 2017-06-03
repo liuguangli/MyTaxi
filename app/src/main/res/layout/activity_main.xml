@@ -1,9 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dalimao.mytaxi.main.view.MainActivity">
+    >
+
+
+    <!--  地图容器-->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/map_container"
+        />
+
+    <!-- 标题栏-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/bg_white"
+        android:id="@+id/top"
+        >
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/user"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:id="@+id/im_user"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/city"
+            android:layout_centerInParent="true"
+            android:textSize="@dimen/text_size_normal"
+            android:text="@string/locating"
+            android:textColor="@color/color_text_normal"
+            />
+    </RelativeLayout>
+
+    <!-- 起点终点选择-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:padding="12dp"
+        android:background="@color/bg_white"
+        android:id="@+id/select_area"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/start"
+                android:textSize="@dimen/text_size_normal"
+                android:textColor="@color/color_text_normal"
+                />
+            <AutoCompleteTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/start"
+                android:textSize="@dimen/text_size_normal"
+                android:padding="12dp"
+                android:textColor="@color/color_text_normal"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/end"
+                android:textSize="@dimen/text_size_normal"
+                android:textColor="@color/color_text_normal"
+                />
+            <AutoCompleteTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/end"
+                android:hint="@string/where_are_you_go"
+                android:textSize="@dimen/text_size_normal"
+                android:textColor="@color/color_text_normal"
+                />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

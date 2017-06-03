@@ -17,6 +17,7 @@
             android:id="@+id/close"
             />
     </RelativeLayout>
+
     <LinearLayout
         android:padding="@dimen/activity_horizontal_margin"
         android:orientation="vertical"
@@ -50,6 +51,7 @@
                 style="@style/Dialog.Input"
                 android:id="@+id/phone"
                 android:inputType="phone"
+                android:textColor="@color/color_text_normal"
                 />
         </LinearLayout>
     </LinearLayout>

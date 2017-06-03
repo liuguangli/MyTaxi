@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 
+import java.util.List;
+
 /**
  * Created by liuguangli on 17/5/30.
  * 定义地图服务通用抽象接口
@@ -30,7 +32,15 @@ public interface ILbsLayer {
      */
     void addOrUpdateMarker(LocationInfo locationInfo, Bitmap bitmap);
 
+    /**
+     *   获取当前城市
+     */
+    String getCity();
 
+    /**
+     * 联动搜索附近的位置
+     */
+    void poiSearch(String key, OnSearchedListener listener);
 
     /**
      *  生命周期函数
@@ -48,5 +58,14 @@ public interface ILbsLayer {
     interface CommonLocationChangeListener {
         void onLocationChanged(LocationInfo locationInfo);
         void onLocation(LocationInfo locationInfo);
+    }
+    /**
+     * POI 搜索结果监听器
+     * Created by liuguangli
+     */
+     interface OnSearchedListener {
+        void onSearched(List<LocationInfo> results);
+
+        void onError(int rCode);
     }
 }

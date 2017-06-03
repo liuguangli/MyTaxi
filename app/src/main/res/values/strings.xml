@@ -28,4 +28,34 @@
     <string name="password_error">密码错误</string>
     <string name="sms_send_fail">服务器异常，验证码未发送成功</string>
     <string name="token_invalid">登录过期</string>
+
+    <!--打车过程所有文案-->
+    <string name="where_are_you_go">您要去哪</string>
+    <string name="start">起点</string>
+    <string name="end">终点</string>
+    <string name="locating">定位中...</string>
+
+    <string name="call">呼叫快车</string>
+    <string name="cancel">取消</string>
+    <string name="route_info">全程%1$d公里，预计%2$.2f元，%3$d分钟到达</string>
+    <string name="calling_driver">正在呼叫附近司机</string>
+    <string name="accept_info">司机：%1$s(车牌:%2$s)已经接单,全程%3$d公里，%4$d分钟到达</string>
+    <string name="driver_arrive">司机：%1$s(车牌:%2$s)已经到达</string>
+    <string name="order_cancel_suc">取消成功</string>
+    <string name="order_cancel_error">取消失败</string>
+    <string name="pay">支付</string>
+    <string name="pay_info">行程结束，感谢你使用滴滴，你需支付¥ %1$.2f 。\n 司机：%2$s 车牌:%3$s</string>
+    <string name="cancel_fail">取消失败</string>
+    <string name="pay_suc">支付成功</string>
+    <string name="show_call_suc">已有司机收到请求</string>
+    <string name="show_call_fail">呼叫失败，稍后再试</string>
+    <string name="driver_arrive_pure">司机已到达</string>
+    <string name="canceling">订单取消中...</string>
+    <string name="service">客服</string>
+    <string name="order">订单</string>
+    <string name="feedback">反馈</string>
+    <string name="driver">司机：</string>
+    <string name="loading">加载中...</string>
+    <string name="price">¥ %1$.2f</string>
+
 </resources>

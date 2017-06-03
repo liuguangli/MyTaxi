@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.amap.api.location.AMapLocation;
@@ -22,10 +23,16 @@ import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MarkerOptions;
 import com.amap.api.maps2d.model.MyLocationStyle;
+import com.amap.api.services.core.AMapException;
+import com.amap.api.services.help.Inputtips;
+import com.amap.api.services.help.InputtipsQuery;
+import com.amap.api.services.help.Tip;
 import com.dalimao.mytaxi.common.util.LogUtil;
 import com.dalimao.mytaxi.common.util.SensorEventHelper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import static android.R.attr.rotation;
 
@@ -52,6 +59,9 @@ public class GaodeLbsLayerImpl implements ILbsLayer {
     private MyLocationStyle myLocationStyle;
     // 管理地图标记集合
     private Map<String, Marker> markerMap = new HashMap<>();
+
+    //    当前城市
+    private String mCity;
     public GaodeLbsLayerImpl(Context context) {
         // 创建地图对象
         mapView = new MapView(context);
@@ -118,6 +128,51 @@ public class GaodeLbsLayerImpl implements ILbsLayer {
         }
     }
 
+    @Override
+    public String getCity() {
+        return mCity;
+    }
+
+
+    /**
+     *  重点内容, 高德地图的 POI 搜索接口
+     * @param key
+     * @param listener
+     */
+    @Override
+    public void poiSearch(String key, final OnSearchedListener listener) {
+
+        if (!TextUtils.isEmpty(key)) {
+            // 1 组装关键字
+            InputtipsQuery inputQuery = new InputtipsQuery(key, "");
+            Inputtips inputTips = new Inputtips(mContext, inputQuery);
+            // 2 开始异步搜索
+            inputTips.requestInputtipsAsyn();
+            // 3 监听处理搜索结果
+            inputTips.setInputtipsListener(new Inputtips.InputtipsListener() {
+                @Override
+                public void onGetInputtips(List<Tip> tipList, int rCode) {
+                    if (rCode == AMapException.CODE_AMAP_SUCCESS) {
+                        // 正确返回解析结果
+                        List<LocationInfo> locationInfos = new ArrayList<LocationInfo>();
+
+                        for (int i = 0; i < tipList.size(); i++) {
+                            Tip tip = tipList.get(i);
+                            LocationInfo locationInfo =
+                                    new LocationInfo( tip.getPoint().getLatitude(),
+                                                     tip.getPoint().getLongitude());
+                            locationInfo.setName(tip.getName());
+                            locationInfos.add(locationInfo);
+                        }
+                        listener.onSearched(locationInfos);
+                    } else {
+                        listener.onError(rCode);
+                    }
+                }
+            });
+
+        }
+    }
 
 
     @Override
@@ -152,7 +207,7 @@ public class GaodeLbsLayerImpl implements ILbsLayer {
             }
         });
         // 设置默认定位按钮是否显示，这里先不想业务使用方开放
-        aMap.getUiSettings().setMyLocationButtonEnabled(true);
+        aMap.getUiSettings().setMyLocationButtonEnabled(false);
         // 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false，这里先不想业务使用方开放
         aMap.setMyLocationEnabled(true);
 
@@ -168,6 +223,8 @@ public class GaodeLbsLayerImpl implements ILbsLayer {
             public void onLocationChanged(AMapLocation aMapLocation) {
                 // 定位变化位置
                 if (mMapLocationChangeListener != null) {
+                    //  当前城市
+                    mCity = aMapLocation.getCity();
                     // 地图已经激活，通知蓝点实时更新
                     mMapLocationChangeListener.onLocationChanged(aMapLocation);// 显示系统小蓝点
                     LogUtil.d(TAG, "onLocationChanged");
@@ -187,6 +244,7 @@ public class GaodeLbsLayerImpl implements ILbsLayer {
 
                             mLocationChangeListener.onLocation(locationInfo);
                         }
+
 
                     }
                     if (mLocationChangeListener != null) {

@@ -1,13 +1,23 @@
 package com.dalimao.mytaxi.main.view;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.dalimao.mytaxi.MyTaxiApplication;
 import com.dalimao.mytaxi.R;
@@ -23,6 +33,7 @@ import com.dalimao.mytaxi.common.lbs.GaodeLbsLayerImpl;
 import com.dalimao.mytaxi.common.lbs.ILbsLayer;
 import com.dalimao.mytaxi.common.lbs.LocationInfo;
 import com.dalimao.mytaxi.common.storage.SharedPreferencesDao;
+import com.dalimao.mytaxi.common.util.DevUtil;
 import com.dalimao.mytaxi.common.util.SensorEventHelper;
 import com.dalimao.mytaxi.common.util.ToastUtil;
 import com.dalimao.mytaxi.main.model.IMainManager;
@@ -30,6 +41,7 @@ import com.dalimao.mytaxi.main.model.MainMangerImpl;
 import com.dalimao.mytaxi.main.presenter.IMainPresenter;
 import com.dalimao.mytaxi.main.presenter.MainPresenterImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.bmob.push.BmobPush;
@@ -49,15 +61,28 @@ import cn.bmob.v3.BmobInstallation;
  *  4 地图封装
  *  ------获取附近司机---
  *
+ *
  */
 public class MainActivity extends AppCompatActivity
         implements  IMainView {
     private final static String TAG = "MainActivity";
     private IMainPresenter mPresenter;
     private ILbsLayer mLbsLayer;
-    private SensorEventHelper mSensorHelper;
     private Bitmap mDriverBit;
     private String mPushKey;
+
+    //  起点与终点
+    private AutoCompleteTextView mStartEdit;
+    private AutoCompleteTextView mEndEdit;
+    private PoiAdapter mEndAdapter;
+    // 标题栏显示当前城市
+    private TextView mCity;
+    // 记录起点和终点
+    private  LocationInfo mStartLocation;
+    private LocationInfo mEndLocation;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +113,12 @@ public class MainActivity extends AppCompatActivity
                 mLbsLayer.addOrUpdateMarker(locationInfo,
                         BitmapFactory.decodeResource(getResources(),
                                 R.drawable.navi_map_gps_locked));
+                 // 记录起点
+                mStartLocation = locationInfo;
+                //  设置标题
+                mCity.setText(mLbsLayer.getCity());
+                // 设置起点
+                mStartEdit.setText(locationInfo.getName());
                 // 获取附近司机
                 getNearDrivers(locationInfo.getLatitude(),
                         locationInfo.getLongitude());
@@ -97,7 +128,9 @@ public class MainActivity extends AppCompatActivity
 
 
         });
-        ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.activity_main);
+
+        // 添加地图到容器
+        ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.map_container);
         mapViewContainer.addView(mLbsLayer.getMapView());
 
         // 推送服务
@@ -109,6 +142,80 @@ public class MainActivity extends AppCompatActivity
         mPushKey = installation.getInstallationId();
         // 启动推送服务
         BmobPush.startWork(this);
+
+
+        //  初始化其他视图元素
+        initViews();
+    }
+    private void initViews() {
+        mStartEdit = (AutoCompleteTextView) findViewById(R.id.start);
+        mEndEdit = (AutoCompleteTextView) findViewById(R.id.end);
+        mCity = (TextView) findViewById(R.id.city);
+        mEndEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //  关键搜索推荐地点
+                mLbsLayer.poiSearch(s.toString(), new ILbsLayer.OnSearchedListener() {
+                    @Override
+                    public void onSearched(List<LocationInfo> results) {
+                         // 更新列表
+                        updatePoiList(results);
+                    }
+
+                    @Override
+                    public void onError(int rCode) {
+
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * todo 更新 POI 列表
+     * @param results
+     */
+    private void updatePoiList(final List<LocationInfo> results) {
+
+        List<String> listString = new ArrayList<String>();
+        for (int i = 0; i < results.size(); i++) {
+            listString.add(results.get(i).getName());
+        }
+        if (mEndAdapter == null) {
+            mEndAdapter = new PoiAdapter(getApplicationContext(), listString);
+            mEndEdit.setAdapter(mEndAdapter);
+
+        } else {
+
+            mEndAdapter.setData(listString);
+        }
+        mEndEdit.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                ToastUtil.show(MainActivity.this, results.get(position).getName());
+                DevUtil.closeInputMethod(MainActivity.this);
+                // TODO: 记录终点
+                mEndLocation = results.get(position);
+                // todo 绘制路径
+                showRoute(mStartLocation, mEndLocation);
+            }
+        });
+        mEndAdapter.notifyDataSetChanged();
+    }
+
+    // todo 绘制起点终点路径
+    private void showRoute(LocationInfo mStartLocation, LocationInfo mEndLocation) {
     }
 
     /**

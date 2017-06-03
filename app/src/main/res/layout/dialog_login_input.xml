@@ -50,6 +50,7 @@
                 style="@style/Dialog.Input"
                 android:id="@+id/phone"
                 android:inputType="phone"
+                android:textColor="@color/color_text_normal"
                 />
         </LinearLayout>
         <LinearLayout
@@ -65,6 +66,7 @@
                 style="@style/Dialog.Input"
                 android:id="@+id/password"
                 android:inputType="textPassword"
+                android:textColor="@color/color_text_normal"
                 />
         </LinearLayout>
         <ProgressBar
@@ -85,6 +87,7 @@
             android:visibility="gone"
             android:padding="12dp"
             style="@style/Tips"
+
             />
     </LinearLayout>
 
