@@ -43,6 +43,18 @@ public interface ILbsLayer {
     void poiSearch(String key, OnSearchedListener listener);
 
     /**
+     * 绘制两点之间行车路径
+     * @param start
+     * @param end
+     * @param color
+     * @param listener
+     */
+    void driverRoute(LocationInfo start,
+                     LocationInfo end,
+                     int color,
+                     OnRouteCompleteListener listener);
+
+    /**
      *  生命周期函数
      */
 
@@ -51,6 +63,9 @@ public interface ILbsLayer {
     void onSaveInstanceState(Bundle outState);
     void onPause();
     void onDestroy();
+
+    void clearAllMarkers();
+
 
     /**
      * Created by liuguangli on 17/5/30.
@@ -68,4 +83,18 @@ public interface ILbsLayer {
 
         void onError(int rCode);
     }
+    /**
+     * 路径规划完成监听
+     * Created by liuguangli on 17/3/24.
+     */
+    interface OnRouteCompleteListener {
+        void onComplete(RouteInfo result);
+    }
+
+    /**
+     *  移动相机到两点之间的视野范围
+     */
+    void moveCamera(LocationInfo locationInfo1,
+                    LocationInfo locationInfo2);
+
 }

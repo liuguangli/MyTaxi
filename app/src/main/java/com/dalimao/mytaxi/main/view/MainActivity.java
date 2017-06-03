@@ -19,6 +19,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.amap.api.maps2d.CameraUpdateFactory;
+import com.amap.api.maps2d.model.LatLng;
+import com.amap.api.maps2d.model.LatLngBounds;
 import com.dalimao.mytaxi.MyTaxiApplication;
 import com.dalimao.mytaxi.R;
 import com.dalimao.mytaxi.account.model.AccountManagerImpl;
@@ -32,8 +35,10 @@ import com.dalimao.mytaxi.common.http.impl.OkHttpClientImpl;
 import com.dalimao.mytaxi.common.lbs.GaodeLbsLayerImpl;
 import com.dalimao.mytaxi.common.lbs.ILbsLayer;
 import com.dalimao.mytaxi.common.lbs.LocationInfo;
+import com.dalimao.mytaxi.common.lbs.RouteInfo;
 import com.dalimao.mytaxi.common.storage.SharedPreferencesDao;
 import com.dalimao.mytaxi.common.util.DevUtil;
+import com.dalimao.mytaxi.common.util.LogUtil;
 import com.dalimao.mytaxi.common.util.SensorEventHelper;
 import com.dalimao.mytaxi.common.util.ToastUtil;
 import com.dalimao.mytaxi.main.model.IMainManager;
@@ -80,8 +85,8 @@ public class MainActivity extends AppCompatActivity
     // 记录起点和终点
     private  LocationInfo mStartLocation;
     private LocationInfo mEndLocation;
-
-
+    private Bitmap mStartBit;
+    private Bitmap mEndBit;
 
 
     @Override
@@ -205,18 +210,53 @@ public class MainActivity extends AppCompatActivity
 
                 ToastUtil.show(MainActivity.this, results.get(position).getName());
                 DevUtil.closeInputMethod(MainActivity.this);
-                // TODO: 记录终点
+                //  记录终点
                 mEndLocation = results.get(position);
-                // todo 绘制路径
+                // 绘制路径
                 showRoute(mStartLocation, mEndLocation);
             }
         });
         mEndAdapter.notifyDataSetChanged();
     }
 
-    // todo 绘制起点终点路径
-    private void showRoute(LocationInfo mStartLocation, LocationInfo mEndLocation) {
+    //  绘制起点终点路径
+    private void showRoute(final LocationInfo mStartLocation,
+                           final LocationInfo mEndLocation) {
+
+         mLbsLayer.clearAllMarkers();
+         addStartMarker();
+         addEndMarker();
+         mLbsLayer.driverRoute(mStartLocation,
+                 mEndLocation,
+                 Color.GREEN,
+                 new ILbsLayer.OnRouteCompleteListener() {
+                     @Override
+                     public void onComplete(RouteInfo result) {
+                         LogUtil.d(TAG, "driverRoute: " + result);
+
+                         mLbsLayer.moveCamera(mStartLocation, mEndLocation);
+                     }
+                 });
     }
+
+    private void addStartMarker() {
+        if (mStartBit == null || mStartBit.isRecycled()) {
+            mStartBit = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.start);
+        }
+        mLbsLayer.addOrUpdateMarker(mStartLocation, mStartBit);
+    }
+
+    private void addEndMarker() {
+        if (mEndBit == null || mEndBit.isRecycled()) {
+            mEndBit = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.end);
+        }
+        mLbsLayer.addOrUpdateMarker(mEndLocation, mEndBit);
+    }
+
+
+
 
     /**
      * 上报当前位置
