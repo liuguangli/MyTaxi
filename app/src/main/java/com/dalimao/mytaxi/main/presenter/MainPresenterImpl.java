@@ -85,6 +85,11 @@ public class MainPresenterImpl implements IMainPresenter {
         }
     }
 
+    @RegisterBus
+   public void onLocationInfo(LocationInfo locationInfo) {
+
+        view.showLocationChange(locationInfo);
+    }
 
 
 
@@ -107,6 +112,11 @@ public class MainPresenterImpl implements IMainPresenter {
 
         mainManager.fetchNearDrivers(latitude, longitude);
 
+    }
+
+    @Override
+    public void updateLocationToServer(LocationInfo locationInfo) {
+        mainManager.updateLocationToServer(locationInfo);
     }
 
 }

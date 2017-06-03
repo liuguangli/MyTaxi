@@ -54,4 +54,29 @@ public class MainMangerImpl implements IMainManager{
         });
     }
 
+    @Override
+    public void updateLocationToServer(final LocationInfo locationInfo) {
+        RxBus.getInstance().chainProcess(new Func1() {
+            @Override
+            public Object call(Object o) {
+                IRequest request = new BaseRequest(API.Config.getDomain()
+                        + API.UPLOAD_LOCATION);
+                request.setBody("latitude",
+                        new Double(locationInfo.getLatitude()).toString() );
+                request.setBody("longitude",
+                        new Double(locationInfo.getLongitude()).toString() );
+                request.setBody("key",locationInfo.getKey());
+                request.setBody("rotation",
+                        new Float(locationInfo.getRotation()).toString() );
+                IResponse response = mHttpClient.post(request, false);
+                if (response.getCode() == BaseBizResponse.STATE_OK) {
+                    LogUtil.d(TAG, "位置上报成功");
+                } else {
+                    LogUtil.d(TAG, "位置上报失败");
+                }
+                return null;
+            }
+        });
+    }
+
 }

@@ -26,7 +26,9 @@
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="556e51b86c4e821c7a296272ea9f5b76" />
-        <activity android:name=".splash.SplashActivity">
+        <activity
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:name=".splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

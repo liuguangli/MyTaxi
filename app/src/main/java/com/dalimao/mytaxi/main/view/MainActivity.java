@@ -89,8 +89,13 @@ public class MainActivity extends AppCompatActivity
                         BitmapFactory.decodeResource(getResources(),
                                 R.drawable.navi_map_gps_locked));
                 // 获取附近司机
-                getNearDrivers(locationInfo.getLatitude(), locationInfo.getLongitude());
+                getNearDrivers(locationInfo.getLatitude(),
+                        locationInfo.getLongitude());
+                // 上报当前位置
+                updateLocationToServer(locationInfo);
             }
+
+
         });
         ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.activity_main);
         mapViewContainer.addView(mLbsLayer.getMapView());
@@ -106,6 +111,14 @@ public class MainActivity extends AppCompatActivity
         BmobPush.startWork(this);
     }
 
+    /**
+     * 上报当前位置
+     * @param locationInfo
+     */
+    private void updateLocationToServer(LocationInfo locationInfo) {
+        locationInfo.setKey(mPushKey);
+        mPresenter.updateLocationToServer(locationInfo);
+    }
 
 
     /**
@@ -171,14 +184,19 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void showNears(List<LocationInfo> data) {
-        if (mDriverBit == null || mDriverBit.isRecycled()) {
-            mDriverBit = BitmapFactory.decodeResource(getResources(), R.drawable.car);
-        }
+
         for (LocationInfo locationInfo : data) {
-            mLbsLayer.addOrUpdateMarker(locationInfo, mDriverBit);
+            showLocationChange(locationInfo);
         }
     }
 
+    @Override
+    public void showLocationChange(LocationInfo locationInfo) {
+        if (mDriverBit == null || mDriverBit.isRecycled()) {
+            mDriverBit = BitmapFactory.decodeResource(getResources(), R.drawable.car);
+        }
+        mLbsLayer.addOrUpdateMarker(locationInfo, mDriverBit);
+    }
 
 
     /**

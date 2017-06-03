@@ -19,4 +19,10 @@ public interface IMainView extends IView {
     void showNears(List<LocationInfo> data);
 
 
+    /**
+     * 显示位置变化
+     * @param locationInfo
+     */
+    void showLocationChange(LocationInfo locationInfo);
+
 }

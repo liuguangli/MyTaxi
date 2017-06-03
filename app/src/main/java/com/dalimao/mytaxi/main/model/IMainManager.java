@@ -16,5 +16,10 @@ public interface IMainManager {
     void fetchNearDrivers(double latitude, double longitude);
 
 
+    /**
+     * 上报位置
+     * @param locationInfo
+     */
 
+    void updateLocationToServer(LocationInfo locationInfo);
 }

@@ -17,4 +17,9 @@ public interface IMainPresenter {
     void fetchNearDrivers(double latitude, double longitude);
 
 
+    /**
+     * 上报当前位置
+     * @param locationInfo
+     */
+    void updateLocationToServer(LocationInfo locationInfo);
 }
