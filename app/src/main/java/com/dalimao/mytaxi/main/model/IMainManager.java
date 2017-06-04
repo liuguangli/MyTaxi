@@ -32,4 +32,11 @@ public interface IMainManager {
      * @param endLocation
      */
     void callDriver(String key, float cost, LocationInfo startLocation, LocationInfo endLocation);
+
+    /**
+     *  取消订单
+     * @param orderId
+     */
+    void cancelOrder(String orderId);
+
 }

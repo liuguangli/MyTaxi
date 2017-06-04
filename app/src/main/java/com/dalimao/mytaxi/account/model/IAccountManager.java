@@ -60,4 +60,10 @@ public interface IAccountManager {
      * token 登录
      */
     void loginByToken();
+
+    /**
+     * 是否登录
+     * @return
+     */
+    boolean isLogin();
 }

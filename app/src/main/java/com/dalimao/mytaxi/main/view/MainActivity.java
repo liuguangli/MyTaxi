@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity
     private Button mBtnCancel;
     private Button mBtnPay;
     private float mCost;
+    private Bitmap mLocationBit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,10 +121,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onLocation(LocationInfo locationInfo) {
-                // 首次定位，添加当前位置的标记
-                mLbsLayer.addOrUpdateMarker(locationInfo,
-                        BitmapFactory.decodeResource(getResources(),
-                                R.drawable.navi_map_gps_locked));
+
                  // 记录起点
                 mStartLocation = locationInfo;
                 //  设置标题
@@ -135,6 +133,8 @@ public class MainActivity extends AppCompatActivity
                         locationInfo.getLongitude());
                 // 上报当前位置
                 updateLocationToServer(locationInfo);
+                // 首次定位，添加当前位置的标记
+                addLocationMarker();
             }
 
 
@@ -157,7 +157,18 @@ public class MainActivity extends AppCompatActivity
 
         //  初始化其他视图元素
         initViews();
+
+        mIsLogin = mPresenter.isLogin();
     }
+
+    private void addLocationMarker() {
+        if (mLocationBit == null || mLocationBit.isRecycled()) {
+            mLocationBit = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.navi_map_gps_locked);
+        }
+        mLbsLayer.addOrUpdateMarker(mStartLocation, mLocationBit);
+    }
+
     private void initViews() {
         mStartEdit = (AutoCompleteTextView) findViewById(R.id.start);
         mEndEdit = (AutoCompleteTextView) findViewById(R.id.end);
@@ -179,13 +190,16 @@ public class MainActivity extends AppCompatActivity
                        // 呼叫司机
                        callDriver();
                     break;
+                    case R.id.btn_cancel:
+                        //  取消
+                        cancel();
+                        break;
                 }
             }
         };
         mBtnCall.setOnClickListener(listener);
         mBtnCancel.setOnClickListener(listener);
         mBtnPay.setOnClickListener(listener);
-
         mEndEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -214,6 +228,53 @@ public class MainActivity extends AppCompatActivity
                 });
             }
         });
+    }
+
+    /**
+     * 取消
+     */
+    private void cancel() {
+        if (!mBtnCall.isEnabled()) {
+            // 说明已经点了呼叫
+            showCanceling();
+            mPresenter.cancel();
+        } else {
+            // 知识显示了路径信息，还没点击呼叫，恢复 UI 即可
+            restoreUI();
+        }
+    }
+
+    /**
+     * 显示取消中
+     */
+    private void showCanceling() {
+        mTips.setVisibility(View.GONE);
+        mLoadingArea.setVisibility(View.VISIBLE);
+        mLoadingText.setText(getString(R.string.canceling));
+        mBtnCancel.setEnabled(false);
+    }
+
+    /**
+     *   恢复 UI
+     */
+
+    private void restoreUI() {
+        // 清楚地图上所有标记：路径信息、起点、终点
+        mLbsLayer.clearAllMarkers();
+        // 添加定位标记
+        addLocationMarker();
+        // 恢复地图视野
+        mLbsLayer.moveCameraToPoint(mStartLocation, 17);
+        //  获取附近司机
+        getNearDrivers(mStartLocation.getLatitude(), mStartLocation.getLongitude());
+        // 隐藏操作栏
+        hideOptArea();
+
+    }
+
+    private void hideOptArea() {
+        mOptArea.setVisibility(View.GONE);
+
     }
 
     /**
@@ -438,7 +499,25 @@ public class MainActivity extends AppCompatActivity
         mLoadingArea.setVisibility(View.GONE);
         mTips.setVisibility(View.VISIBLE);
         mTips.setText(getString(R.string.show_call_fail));
+        mBtnCall.setEnabled(true);
 
+    }
+
+    /**
+     * 取消订单成功
+     */
+    @Override
+    public void showCancelSuc() {
+        ToastUtil.show(this, getString(R.string.order_cancel_suc));
+        restoreUI();
+    }
+    /**
+     * 取消订单失败
+     */
+    @Override
+    public void showCancelFail() {
+        ToastUtil.show(this, getString(R.string.order_cancel_error));
+        mBtnCancel.setEnabled(true);
     }
 
 

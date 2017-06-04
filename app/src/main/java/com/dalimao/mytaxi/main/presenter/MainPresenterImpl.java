@@ -24,6 +24,9 @@ public class MainPresenterImpl implements IMainPresenter {
     private IMainView view;
     private IAccountManager accountManager;
     private IMainManager mainManager;
+    // 当前的订单
+    private Order mCurrentOrder;
+
     /**
      * 接收子线程消息的 Handler
      */
@@ -98,8 +101,19 @@ public class MainPresenterImpl implements IMainPresenter {
             // 呼叫司机
             if (response.getCode() == BaseBizResponse.STATE_OK) {
                 view.showCallDriverSuc();
+                // 保存当前的订单
+                mCurrentOrder = response.getData();
             } else {
                 view.showCallDriverFail();
+            }
+        } else if (response.getState() == OrderStateOptResponse.ORDER_STATE_CANCEL) {
+            // 取消订单
+            if (response.getCode() == BaseBizResponse.STATE_OK) {
+
+                view.showCancelSuc();
+
+            } else {
+                view.showCancelFail();
             }
         }
     }
@@ -134,6 +148,23 @@ public class MainPresenterImpl implements IMainPresenter {
     @Override
     public void callDriver(String key, float cost, LocationInfo startLocation, LocationInfo endLocation) {
         mainManager.callDriver(key, cost, startLocation, endLocation);
+    }
+
+    @Override
+    public boolean isLogin() {
+        return accountManager.isLogin();
+    }
+
+    /**
+     *  取消呼叫
+     */
+    @Override
+    public void cancel() {
+        if (mCurrentOrder != null) {
+            mainManager.cancelOrder(mCurrentOrder.getOrderId());
+        } else {
+            view.showCancelSuc();
+        }
     }
 
 }

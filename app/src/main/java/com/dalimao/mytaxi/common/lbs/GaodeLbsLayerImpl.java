@@ -3,6 +3,7 @@ package com.dalimao.mytaxi.common.lbs;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -356,12 +357,7 @@ public class GaodeLbsLayerImpl implements ILbsLayer {
                     locationInfo.setKey(KEY_MY_MARKERE);
                     if (firstLocation) {
                         firstLocation = false;
-                        LatLng latLng = new LatLng(aMapLocation.getLatitude(),
-                                aMapLocation.getLongitude());
-
-                        CameraUpdate up = CameraUpdateFactory.newCameraPosition(new CameraPosition(
-                                latLng, 17, 30, 30));
-                        aMap.moveCamera(up);
+                        moveCameraToPoint(locationInfo, 17);
                         if (mLocationChangeListener != null) {
 
                             mLocationChangeListener.onLocation(locationInfo);
@@ -377,6 +373,20 @@ public class GaodeLbsLayerImpl implements ILbsLayer {
             }
         });
         mlocationClient.startLocation();
+    }
+
+    /**
+     * 缩放相机
+     * @param locationInfo
+     * @param scale
+     */
+    @Override
+    public void moveCameraToPoint(LocationInfo locationInfo, int scale) {
+        LatLng latLng = new LatLng(locationInfo.getLatitude(),
+                locationInfo.getLongitude());
+        CameraUpdate up = CameraUpdateFactory.newCameraPosition(new CameraPosition(
+                latLng, scale, 30, 30));
+        aMap.moveCamera(up);
     }
 
     @Override

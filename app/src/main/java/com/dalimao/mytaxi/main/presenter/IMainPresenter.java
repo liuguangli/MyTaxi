@@ -32,4 +32,13 @@ public interface IMainPresenter {
      * @param mEndLocation
      */
     void callDriver(String key, float cost, LocationInfo mStartLocation, LocationInfo mEndLocation);
+
+
+
+    boolean isLogin();
+
+    /**
+     * 取消呼叫
+     */
+    void cancel();
 }

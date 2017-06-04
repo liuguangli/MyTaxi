@@ -37,4 +37,18 @@ public interface IMainView extends IView {
     void showCallDriverFail();
 
 
+
+
+    /**
+     * 取消订单成功
+     */
+    void showCancelSuc();
+    /**
+     *  显示取消定失败
+     *
+     */
+    void showCancelFail();
+
+
+
 }

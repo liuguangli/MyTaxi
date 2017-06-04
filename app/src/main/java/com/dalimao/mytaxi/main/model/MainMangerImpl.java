@@ -125,11 +125,44 @@ public class MainMangerImpl implements IMainManager{
                 request.setBody("cost", new Float(cost).toString());
 
                 IResponse response = mHttpClient.post(request, false);
-                OrderStateOptResponse orderStateOptResponse = new OrderStateOptResponse();
+                OrderStateOptResponse orderStateOptResponse =
+                        new OrderStateOptResponse();
+                if (response.getCode() == BaseBizResponse.STATE_OK) {
+                    // 解析订单信息
+                    orderStateOptResponse =
+                            new Gson().fromJson(response.getData(),
+                                    OrderStateOptResponse.class);
+                }
+
                 orderStateOptResponse.setCode(response.getCode());
                 orderStateOptResponse.setState(OrderStateOptResponse.ORDER_STATE_CREATE);
                 LogUtil.d(TAG, "call driver: " + response.getData());
-                LogUtil.d(TAG, "call driver phone: " + phone);
+
+                return orderStateOptResponse;
+            }
+        });
+    }
+
+    /**
+     * 取消订单
+     * @param orderId
+     */
+    @Override
+    public void cancelOrder(final String orderId) {
+
+        RxBus.getInstance().chainProcess(new Func1() {
+            @Override
+            public Object call(Object o) {
+                IRequest request = new BaseRequest(API.Config.getDomain()
+                        + API.CANCEL_ORDER);
+                request.setBody("id", orderId);
+
+                IResponse response = mHttpClient.post(request, false);
+                OrderStateOptResponse orderStateOptResponse = new OrderStateOptResponse();
+                orderStateOptResponse.setCode(response.getCode());
+                orderStateOptResponse.setState(OrderStateOptResponse.ORDER_STATE_CANCEL);
+
+                LogUtil.d(TAG, "cancel order: " + response.getData());
                 return orderStateOptResponse;
             }
         });
