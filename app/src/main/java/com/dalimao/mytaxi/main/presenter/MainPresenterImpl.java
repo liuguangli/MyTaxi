@@ -109,12 +109,16 @@ public class MainPresenterImpl implements IMainPresenter {
         } else if (response.getState() == OrderStateOptResponse.ORDER_STATE_CANCEL) {
             // 取消订单
             if (response.getCode() == BaseBizResponse.STATE_OK) {
-
+                mCurrentOrder = null;
                 view.showCancelSuc();
 
             } else {
                 view.showCancelFail();
             }
+        } else if (response.getState() == OrderStateOptResponse.ORDER_STATE_ACCEPT) {
+            // 司机接单
+            mCurrentOrder = response.getData();
+            view.showDriverAcceptOrder(mCurrentOrder);
         }
     }
 

@@ -58,5 +58,6 @@
     <string name="loading">加载中...</string>
     <string name="price">¥ %1$.2f</string>
     <string name="pls_login">请先登录</string>
+    <string name="driver_accept_order">司机接单了</string>
 
 </resources>

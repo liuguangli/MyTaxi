@@ -50,5 +50,9 @@ public interface IMainView extends IView {
     void showCancelFail();
 
 
-
+    /**
+     * 显示司机接单
+     * @param mCurrentOrder
+     */
+    void showDriverAcceptOrder(Order mCurrentOrder);
 }
