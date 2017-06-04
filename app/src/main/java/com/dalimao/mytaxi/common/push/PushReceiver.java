@@ -7,6 +7,8 @@ import android.content.Intent;
 import com.dalimao.mytaxi.common.databus.RxBus;
 import com.dalimao.mytaxi.common.lbs.LocationInfo;
 import com.dalimao.mytaxi.common.util.LogUtil;
+import com.dalimao.mytaxi.main.model.bean.Order;
+import com.dalimao.mytaxi.main.model.response.OrderStateOptResponse;
 import com.google.gson.Gson;
 
 
@@ -26,8 +28,8 @@ public class PushReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(PushConstants.ACTION_MESSAGE)) {
             String msg = intent.getStringExtra("msg");
-            LogUtil.d("bmob", "客户端收到推送内容：" + msg);
-            // TODO: 17/6/1  通知业务或UI
+            LogUtil.d("PushReceiver", "bmob 客户端收到推送内容：" + msg);
+            //  通知业务或UI
             // {"data":
             //  {"key":"4913c896-2686-4230-86e5-5d9ae0f76c89",
             //  "latitude":23.135379999999998,

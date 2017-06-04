@@ -8,11 +8,12 @@ import com.dalimao.mytaxi.common.databus.RegisterBus;
 import com.dalimao.mytaxi.common.http.biz.BaseBizResponse;
 import com.dalimao.mytaxi.common.lbs.LocationInfo;
 import com.dalimao.mytaxi.main.model.IMainManager;
+import com.dalimao.mytaxi.main.model.bean.Order;
 import com.dalimao.mytaxi.main.model.response.NearDriversResponse;
+import com.dalimao.mytaxi.main.model.response.OrderStateOptResponse;
 import com.dalimao.mytaxi.main.view.IMainView;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 
 /**
  * Created by liuguangli on 17/5/14.
@@ -90,7 +91,18 @@ public class MainPresenterImpl implements IMainPresenter {
 
         view.showLocationChange(locationInfo);
     }
-
+    // todo 订单状态响应
+    @RegisterBus
+    public void onOrderOptResponse(OrderStateOptResponse response) {
+        if (response.getState() == OrderStateOptResponse.ORDER_STATE_CREATE) {
+            // 呼叫司机
+            if (response.getCode() == BaseBizResponse.STATE_OK) {
+                view.showCallDriverSuc();
+            } else {
+                view.showCallDriverFail();
+            }
+        }
+    }
 
 
     public MainPresenterImpl(IMainView view,
@@ -117,6 +129,11 @@ public class MainPresenterImpl implements IMainPresenter {
     @Override
     public void updateLocationToServer(LocationInfo locationInfo) {
         mainManager.updateLocationToServer(locationInfo);
+    }
+
+    @Override
+    public void callDriver(String key, float cost, LocationInfo startLocation, LocationInfo endLocation) {
+        mainManager.callDriver(key, cost, startLocation, endLocation);
     }
 
 }

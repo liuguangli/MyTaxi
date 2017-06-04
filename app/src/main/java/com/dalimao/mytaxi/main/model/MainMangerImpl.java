@@ -1,5 +1,7 @@
 package com.dalimao.mytaxi.main.model;
 
+import com.dalimao.mytaxi.MyTaxiApplication;
+import com.dalimao.mytaxi.account.model.response.Account;
 import com.dalimao.mytaxi.common.databus.RxBus;
 import com.dalimao.mytaxi.common.http.IHttpClient;
 import com.dalimao.mytaxi.common.http.IRequest;
@@ -8,8 +10,10 @@ import com.dalimao.mytaxi.common.http.api.API;
 import com.dalimao.mytaxi.common.http.biz.BaseBizResponse;
 import com.dalimao.mytaxi.common.http.impl.BaseRequest;
 import com.dalimao.mytaxi.common.lbs.LocationInfo;
+import com.dalimao.mytaxi.common.storage.SharedPreferencesDao;
 import com.dalimao.mytaxi.common.util.LogUtil;
 import com.dalimao.mytaxi.main.model.response.NearDriversResponse;
+import com.dalimao.mytaxi.main.model.response.OrderStateOptResponse;
 import com.google.gson.Gson;
 
 import rx.functions.Func1;
@@ -75,6 +79,58 @@ public class MainMangerImpl implements IMainManager{
                     LogUtil.d(TAG, "位置上报失败");
                 }
                 return null;
+            }
+        });
+    }
+
+    /**
+     * 呼叫司机
+     * @param key
+     * @param startLocation
+     * @param endLocation
+     */
+    @Override
+    public void callDriver(final String key,
+                           final float cost,
+                           final LocationInfo startLocation,
+                           final LocationInfo endLocation) {
+        RxBus.getInstance().chainProcess(new Func1() {
+            @Override
+            public Object call(Object o) {
+                /**
+                 *  获取 uid,phone
+                  */
+
+                SharedPreferencesDao sharedPreferencesDao =
+                        new SharedPreferencesDao(MyTaxiApplication.getInstance(),
+                                SharedPreferencesDao.FILE_ACCOUNT);
+                Account account =
+                        (Account) sharedPreferencesDao.get(SharedPreferencesDao.KEY_ACCOUNT,
+                                Account.class);
+                String uid = account.getUid();
+                String phone = account.getAccount();
+                IRequest request = new BaseRequest(API.Config.getDomain()
+                        + API.CALL_DRIVER);
+                request.setBody("key", key);
+                request.setBody("uid",uid);
+                request.setBody("phone", phone);
+                request.setBody("startLatitude",
+                        new Double(startLocation.getLatitude()).toString() );
+                request.setBody("startLongitude",
+                        new Double(startLocation.getLongitude()).toString() );
+                request.setBody("endLatitude",
+                        new Double(endLocation.getLatitude()).toString() );
+                request.setBody("endLongitude",
+                        new Double(endLocation.getLongitude()).toString() );
+                request.setBody("cost", new Float(cost).toString());
+
+                IResponse response = mHttpClient.post(request, false);
+                OrderStateOptResponse orderStateOptResponse = new OrderStateOptResponse();
+                orderStateOptResponse.setCode(response.getCode());
+                orderStateOptResponse.setState(OrderStateOptResponse.ORDER_STATE_CREATE);
+                LogUtil.d(TAG, "call driver: " + response.getData());
+                LogUtil.d(TAG, "call driver phone: " + phone);
+                return orderStateOptResponse;
             }
         });
     }

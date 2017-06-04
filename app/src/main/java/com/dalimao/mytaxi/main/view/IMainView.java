@@ -2,6 +2,7 @@ package com.dalimao.mytaxi.main.view;
 
 import com.dalimao.mytaxi.account.view.IView;
 import com.dalimao.mytaxi.common.lbs.LocationInfo;
+import com.dalimao.mytaxi.main.model.bean.Order;
 
 import java.util.List;
 
@@ -24,5 +25,16 @@ public interface IMainView extends IView {
      * @param locationInfo
      */
     void showLocationChange(LocationInfo locationInfo);
+
+    /**
+     *  显示呼叫成功发出
+     */
+    void showCallDriverSuc();
+
+    /**
+     *  显示呼叫未成功发出
+     */
+    void showCallDriverFail();
+
 
 }

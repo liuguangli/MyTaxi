@@ -1,17 +1,16 @@
 package com.dalimao.mytaxi.main.view;
 
 import android.content.DialogInterface;
-import android.content.Intent;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.support.v4.widget.DrawerLayout;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.Gravity;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -19,9 +18,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.amap.api.maps2d.CameraUpdateFactory;
-import com.amap.api.maps2d.model.LatLng;
-import com.amap.api.maps2d.model.LatLngBounds;
 import com.dalimao.mytaxi.MyTaxiApplication;
 import com.dalimao.mytaxi.R;
 import com.dalimao.mytaxi.account.model.AccountManagerImpl;
@@ -87,7 +83,17 @@ public class MainActivity extends AppCompatActivity
     private LocationInfo mEndLocation;
     private Bitmap mStartBit;
     private Bitmap mEndBit;
-
+    //  当前是否登录
+    private boolean mIsLogin;
+    //  操作状态相关元素
+    private View mOptArea;
+    private View mLoadingArea;
+    private TextView mTips;
+    private TextView mLoadingText;
+    private Button mBtnCall;
+    private Button mBtnCancel;
+    private Button mBtnPay;
+    private float mCost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,6 +162,30 @@ public class MainActivity extends AppCompatActivity
         mStartEdit = (AutoCompleteTextView) findViewById(R.id.start);
         mEndEdit = (AutoCompleteTextView) findViewById(R.id.end);
         mCity = (TextView) findViewById(R.id.city);
+        mOptArea = findViewById(R.id.optArea);
+        mLoadingArea = findViewById(R.id.loading_area);
+        mLoadingText = (TextView) findViewById(R.id.loading_text);
+        mBtnCall = (Button) findViewById(R.id.btn_call_driver);
+        mBtnCancel = (Button) findViewById(R.id.btn_cancel);
+        mBtnPay = (Button) findViewById(R.id.btn_pay);
+        mTips = (TextView) findViewById(R.id.tips_info);
+
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                switch (v.getId()) {
+                   case  R.id.btn_call_driver:
+                       // 呼叫司机
+                       callDriver();
+                    break;
+                }
+            }
+        };
+        mBtnCall.setOnClickListener(listener);
+        mBtnCancel.setOnClickListener(listener);
+        mBtnPay.setOnClickListener(listener);
+
         mEndEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -187,7 +217,31 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * todo 更新 POI 列表
+     * 呼叫司机
+     */
+    private void callDriver() {
+        if (mIsLogin) {
+            // 已登录，直接呼叫
+            showCalling();
+            //   请求呼叫
+            mPresenter.callDriver(mPushKey, mCost, mStartLocation, mEndLocation);
+        } else {
+            // 未登录，先登录
+            mPresenter.loginByToken();
+            ToastUtil.show(this, getString(R.string.pls_login));
+        }
+    }
+
+    private void showCalling() {
+        mTips.setVisibility(View.GONE);
+        mLoadingArea.setVisibility(View.VISIBLE);
+        mLoadingText.setText(getString(R.string.calling_driver));
+        mBtnCancel.setEnabled(true);
+        mBtnCall.setEnabled(false);
+    }
+
+    /**
+     * 更新 POI 列表
      * @param results
      */
     private void updatePoiList(final List<LocationInfo> results) {
@@ -234,9 +288,33 @@ public class MainActivity extends AppCompatActivity
                      public void onComplete(RouteInfo result) {
                          LogUtil.d(TAG, "driverRoute: " + result);
 
+
                          mLbsLayer.moveCamera(mStartLocation, mEndLocation);
+                         // 显示操作区
+                         showOptArea();
+                         mCost = result.getTaxiCost();
+                         String infoString = getString(R.string.route_info);
+                         infoString = String.format(infoString,
+                                 new Float(result.getDistance()).intValue(),
+                                 mCost,
+                                 result.getDuration());
+                         mTips.setVisibility(View.VISIBLE);
+                         mTips.setText(infoString);
                      }
                  });
+    }
+
+
+
+
+    /**
+     * todo 显示操作区
+     */
+    private void showOptArea() {
+        mOptArea.setVisibility(View.VISIBLE);
+
+
+
     }
 
     private void addStartMarker() {
@@ -322,6 +400,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void showLoginSuc() {
         ToastUtil.show(this, getString(R.string.login_suc));
+        mIsLogin = true;
     }
 
     /**
@@ -345,6 +424,23 @@ public class MainActivity extends AppCompatActivity
         mLbsLayer.addOrUpdateMarker(locationInfo, mDriverBit);
     }
 
+    /**
+     *  呼叫司机成功发出
+     */
+    @Override
+    public void showCallDriverSuc() {
+        mLoadingArea.setVisibility(View.GONE);
+        mTips.setVisibility(View.VISIBLE);
+        mTips.setText(getString(R.string.show_call_suc));
+    }
+    @Override
+    public void showCallDriverFail() {
+        mLoadingArea.setVisibility(View.GONE);
+        mTips.setVisibility(View.VISIBLE);
+        mTips.setText(getString(R.string.show_call_fail));
+
+    }
+
 
     /**
      * 显示 loading
@@ -366,6 +462,7 @@ public class MainActivity extends AppCompatActivity
                 // 登录过期
                 ToastUtil.show(this, getString(R.string.token_invalid));
                 showPhoneInputDialog();
+                mIsLogin = false;
                 break;
             case IAccountManager.SERVER_FAIL:
                 // 服务器错误
