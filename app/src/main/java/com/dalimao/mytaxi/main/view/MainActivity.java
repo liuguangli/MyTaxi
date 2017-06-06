@@ -35,7 +35,6 @@ import com.dalimao.mytaxi.common.lbs.RouteInfo;
 import com.dalimao.mytaxi.common.storage.SharedPreferencesDao;
 import com.dalimao.mytaxi.common.util.DevUtil;
 import com.dalimao.mytaxi.common.util.LogUtil;
-import com.dalimao.mytaxi.common.util.SensorEventHelper;
 import com.dalimao.mytaxi.common.util.ToastUtil;
 import com.dalimao.mytaxi.main.model.IMainManager;
 import com.dalimao.mytaxi.main.model.MainMangerImpl;
@@ -377,6 +376,9 @@ public class MainActivity extends AppCompatActivity
         mTips.setVisibility(View.VISIBLE);
         mBtnCall.setEnabled(true);
         mBtnCancel.setEnabled(true);
+        mBtnCancel.setVisibility(View.VISIBLE);
+        mBtnCall.setVisibility(View.VISIBLE);
+        mBtnPay.setVisibility(View.GONE);
     }
 
     private void addStartMarker() {
@@ -463,7 +465,10 @@ public class MainActivity extends AppCompatActivity
     public void showLoginSuc() {
         ToastUtil.show(this, getString(R.string.login_suc));
         mIsLogin = true;
-        updateLocationToServer(mStartLocation);
+        if (mStartLocation != null) {
+            updateLocationToServer(mStartLocation);
+        }
+
     }
 
     /**
@@ -480,6 +485,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * 显示司机的标记
+     * @param locationInfo
+     */
     @Override
     public void showLocationChange(LocationInfo locationInfo) {
         if (mDriverBit == null || mDriverBit.isRecycled()) {
@@ -575,6 +584,106 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
 
+    }
+
+    /**
+     * 提示司机到达
+     * @param mCurrentOrder
+     */
+    @Override
+    public void showDriverArriveStart(Order mCurrentOrder) {
+
+        String arriveTemp = getString(R.string.driver_arrive);
+        mTips.setText(String.format(arriveTemp,
+                mCurrentOrder.getDriverName(),
+                mCurrentOrder.getCarNo()));
+
+    }
+
+    /**
+     *   司机到上车地点的路径绘制
+     * @param locationInfo
+     */
+
+    @Override
+    public void updateDriver2StartRoute(LocationInfo locationInfo, final Order order) {
+
+        mLbsLayer.clearAllMarkers();
+        addLocationMarker();
+        showLocationChange(locationInfo);
+        mLbsLayer.driverRoute(locationInfo, mStartLocation, Color.BLUE, new ILbsLayer.OnRouteCompleteListener() {
+            @Override
+            public void onComplete(RouteInfo result) {
+
+                String tipsTemp = getString(R.string.accept_info);
+                mTips.setText(String.format(tipsTemp,
+                        order.getDriverName(),
+                        order.getCarNo(),
+                        result.getDistance(),
+                        result.getDuration()));
+            }
+        });
+        // 聚焦
+        mLbsLayer.moveCamera(locationInfo, mStartLocation);
+
+    }
+
+    /**
+     * 显示开始行程
+     * @param order
+     */
+    @Override
+    public void showStartDrive(Order order) {
+
+
+        LocationInfo locationInfo =
+                new LocationInfo(order.getDriverLatitude(), order.getDriverLongitude());
+        // 路径规划绘制
+        updateDriver2EndRoute(locationInfo, order);
+        // 隐藏按钮
+        mBtnCancel.setVisibility(View.GONE);
+        mBtnCall.setVisibility(View.GONE);
+    }
+
+    /**
+     * 显示到达终点
+     * @param order
+     */
+    @Override
+    public void showArriveEnd(Order order) {
+        String tipsTemp = getString(R.string.pay_info);
+        String tips  = String.format(tipsTemp,
+                order.getCost(),
+                order.getDriverName(),
+                order.getCarNo());
+        mTips.setText(tips);
+        mBtnPay.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     *  司机到终点的路径绘制或更新
+     * @param locationInfo
+     */
+
+    @Override
+    public void updateDriver2EndRoute(LocationInfo locationInfo, final Order order) {
+        mLbsLayer.clearAllMarkers();
+        addEndMarker();
+        showLocationChange(locationInfo);
+        mLbsLayer.driverRoute(locationInfo, mEndLocation, Color.GREEN, new ILbsLayer.OnRouteCompleteListener() {
+            @Override
+            public void onComplete(RouteInfo result) {
+
+                String tipsTemp = getString(R.string.driving_info);
+                mTips.setText(String.format(tipsTemp,
+                        order.getDriverName(),
+                        order.getCarNo(),
+                        result.getDistance(),
+                        result.getDuration()));
+            }
+        });
+        // 聚焦
+        mLbsLayer.moveCamera(locationInfo, mEndLocation);
     }
 
 

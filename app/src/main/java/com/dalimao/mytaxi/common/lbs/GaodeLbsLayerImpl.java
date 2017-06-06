@@ -174,11 +174,13 @@ public class GaodeLbsLayerImpl implements ILbsLayer {
 
                         for (int i = 0; i < tipList.size(); i++) {
                             Tip tip = tipList.get(i);
-                            LocationInfo locationInfo =
-                                    new LocationInfo(tip.getPoint().getLatitude(),
-                                            tip.getPoint().getLongitude());
-                            locationInfo.setName(tip.getName());
-                            locationInfos.add(locationInfo);
+                            if (tip.getPoint()!= null) {
+                                LocationInfo locationInfo =
+                                        new LocationInfo(tip.getPoint().getLatitude(),
+                                                tip.getPoint().getLongitude());
+                                locationInfo.setName(tip.getName());
+                                locationInfos.add(locationInfo);
+                            }
                         }
                         listener.onSearched(locationInfos);
                     } else {

@@ -55,7 +55,7 @@ public class PushReceiver extends BroadcastReceiver {
                             new Gson().fromJson(jsonObject.optString("data"), Order.class);
                     OrderStateOptResponse stateOptResponse = new OrderStateOptResponse();
                     stateOptResponse.setData(order);
-                    stateOptResponse.setState(OrderStateOptResponse.ORDER_STATE_ACCEPT);
+                    stateOptResponse.setState(order.getState());
                     stateOptResponse.setCode(BaseBizResponse.STATE_OK);
                     // 通知 UI
                     RxBus.getInstance().send(stateOptResponse);

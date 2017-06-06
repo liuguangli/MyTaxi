@@ -55,4 +55,37 @@ public interface IMainView extends IView {
      * @param mCurrentOrder
      */
     void showDriverAcceptOrder(Order mCurrentOrder);
+
+    /**
+     * 司机到达上车地点
+     * @param mCurrentOrder
+     */
+    void showDriverArriveStart(Order mCurrentOrder);
+
+    /**
+     * 更新司机到上车点的路径
+     * @param locationInfo
+     */
+    void updateDriver2StartRoute(LocationInfo locationInfo, Order order);
+
+    /**
+     * 更新司机到上车点的路径
+     * @param order
+     */
+    void showStartDrive(Order order);
+
+    /**
+     *   显示到达终点
+     * @param order
+     */
+    void showArriveEnd(Order order);
+
+    /**
+     *  更新司机到终点的路径
+     * @param locationInfo
+     */
+    void updateDriver2EndRoute(LocationInfo locationInfo, Order order);
+
+
+
 }
