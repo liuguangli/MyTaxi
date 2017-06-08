@@ -29,6 +29,8 @@ public class API {
 
     // 取消订单
     public static final String CANCEL_ORDER = "/f34e28da5816433d/cancelOrder";
+    // 支付成功
+    public static final String PAY = "/f34e28da5816433d/paySuc";
 
     // 检查用户是否存在
     public static String CHECK_USER_EXIST =

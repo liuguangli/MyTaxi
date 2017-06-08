@@ -39,4 +39,9 @@ public interface IMainManager {
      */
     void cancelOrder(String orderId);
 
+    /**
+     *  支付
+     */
+    void pay(String orderId);
+
 }

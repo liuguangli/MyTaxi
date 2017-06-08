@@ -19,6 +19,7 @@ import com.dalimao.mytaxi.common.http.impl.BaseRequest;
 import com.dalimao.mytaxi.common.http.impl.BaseResponse;
 import com.dalimao.mytaxi.common.storage.SharedPreferencesDao;
 import com.dalimao.mytaxi.common.util.DevUtil;
+import com.dalimao.mytaxi.common.util.LogUtil;
 import com.google.gson.Gson;
 
 import rx.functions.Func1;
@@ -69,6 +70,7 @@ public class AccountManagerImpl implements IAccountManager {
                 IResponse response = httpClient.get(request, false);
                 Log.d(TAG, response.getData());
                 SmsCodeResponse smsCodeResponse = new SmsCodeResponse();
+                LogUtil.d(TAG, response.getData());
                 if (response.getCode() == BaseResponse.STATE_OK) {
                     BaseBizResponse bizRes =
                             new Gson().fromJson(response.getData(),

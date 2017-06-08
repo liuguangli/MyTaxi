@@ -193,6 +193,10 @@ public class MainActivity extends AppCompatActivity
                         //  取消
                         cancel();
                         break;
+                    case R.id.btn_pay:
+                        // 支付
+                        pay();
+                        break;
                 }
             }
         };
@@ -227,6 +231,13 @@ public class MainActivity extends AppCompatActivity
                 });
             }
         });
+    }
+
+    private void pay() {
+        mLoadingArea.setVisibility(View.VISIBLE);
+        mTips.setVisibility(View.GONE);
+        mLoadingText.setText(R.string.paying);
+        mPresenter.pay();
     }
 
     /**
@@ -684,6 +695,25 @@ public class MainActivity extends AppCompatActivity
         });
         // 聚焦
         mLbsLayer.moveCamera(locationInfo, mEndLocation);
+    }
+
+    /**
+     * 显示支付成功
+     * @param mCurrentOrder
+     */
+    @Override
+    public void showPaySuc(Order mCurrentOrder) {
+        restoreUI();
+        ToastUtil.show(this, getString(R.string.pay_suc));
+    }
+
+    /**
+     *   显示支付失败
+     */
+    @Override
+    public void showPayFail() {
+        restoreUI();
+        ToastUtil.show(this, getString(R.string.pay_fail));
     }
 
 

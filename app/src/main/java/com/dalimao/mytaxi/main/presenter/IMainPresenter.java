@@ -41,4 +41,10 @@ public interface IMainPresenter {
      * 取消呼叫
      */
     void cancel();
+
+    /**
+     * 支付
+     */
+    void pay();
+
 }

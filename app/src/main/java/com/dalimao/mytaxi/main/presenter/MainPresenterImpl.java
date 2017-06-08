@@ -146,6 +146,15 @@ public class MainPresenterImpl implements IMainPresenter {
             // 到达终点
             mCurrentOrder = response.getData();
             view.showArriveEnd(mCurrentOrder);
+        } else if (response.getState() ==
+                OrderStateOptResponse.PAY) {
+            //  支付
+            if (response.getCode() == BaseBizResponse.STATE_OK) {
+                view.showPaySuc(mCurrentOrder);
+            } else {
+                view.showPayFail();
+            }
+
         }
     }
 
@@ -195,6 +204,16 @@ public class MainPresenterImpl implements IMainPresenter {
             mainManager.cancelOrder(mCurrentOrder.getOrderId());
         } else {
             view.showCancelSuc();
+        }
+    }
+
+    /**
+     *  支付
+     */
+    @Override
+    public void pay() {
+        if (mCurrentOrder != null) {
+            mainManager.pay(mCurrentOrder.getOrderId());
         }
     }
 
