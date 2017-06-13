@@ -32,6 +32,7 @@ import com.dalimao.mytaxi.common.http.impl.BaseResponse;
 import com.dalimao.mytaxi.common.http.impl.OkHttpClientImpl;
 import com.dalimao.mytaxi.common.storage.SharedPreferencesDao;
 import com.dalimao.mytaxi.common.util.ToastUtil;
+import com.dalimao.mytaxi.main.view.MainActivity;
 import com.google.gson.Gson;
 
 import java.lang.ref.SoftReference;
@@ -46,6 +47,7 @@ public class LoginDialog extends Dialog implements ILoginView {
 
 
     private static final String TAG = "LoginDialog";
+    private  MainActivity mainActivity;
     private TextView mPhone;
     private EditText mPw;
     private Button mBtnConfirm;
@@ -56,7 +58,7 @@ public class LoginDialog extends Dialog implements ILoginView {
 
 
 
-    public LoginDialog(Context context, String phone) {
+    public LoginDialog(MainActivity context, String phone) {
         this(context, R.style.Dialog);
         mPhoneStr = phone;
         IHttpClient httpClient = new OkHttpClientImpl();
@@ -65,7 +67,7 @@ public class LoginDialog extends Dialog implements ILoginView {
                         SharedPreferencesDao.FILE_ACCOUNT);
         IAccountManager accountManager = new AccountManagerImpl(httpClient, dao);
         mPresenter = new LoginDialogPresenterImpl(this, accountManager);
-
+        this.mainActivity = context;
     }
 
     public LoginDialog(Context context, int theme) {
@@ -158,6 +160,7 @@ public class LoginDialog extends Dialog implements ILoginView {
         mTips.setText(getContext().getString(R.string.login_suc));
         ToastUtil.show(getContext(), getContext().getString(R.string.login_suc));
         dismiss();
+        mainActivity.showLoginSuc();
 
     }
 
