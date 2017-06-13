@@ -2,6 +2,7 @@ package com.dalimao.mytaxi.account.view;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import com.dalimao.mytaxi.R;
 import com.dalimao.mytaxi.common.util.FormatUtil;
+import com.dalimao.mytaxi.main.view.MainActivity;
 
 /**
  * Created by liuguangli on 17/2/26.
@@ -22,9 +24,10 @@ public class PhoneInputDialog extends Dialog{
     private View mRoot;
     private EditText mPhone;
     private Button mButton;
-
-    public PhoneInputDialog(Context context) {
-        this(context, R.style.Dialog);
+    private MainActivity mainActivity;
+    public PhoneInputDialog(MainActivity mainActivity) {
+        this(mainActivity, R.style.Dialog);
+        this.mainActivity = mainActivity;
     }
     public PhoneInputDialog(Context context, int theme) {
         super(context, theme);
@@ -69,9 +72,14 @@ public class PhoneInputDialog extends Dialog{
             public void onClick(View v) {
 
                 String phone =  mPhone.getText().toString();
-                SmsCodeDialog dialog = new SmsCodeDialog(getContext(), phone);
+                SmsCodeDialog dialog = new SmsCodeDialog(mainActivity, phone);
                 dialog.show();
-                PhoneInputDialog.this.dismiss();
+                dialog.setOnDismissListener(new OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        PhoneInputDialog.this.dismiss();
+                    }
+                });
 
             }
         });

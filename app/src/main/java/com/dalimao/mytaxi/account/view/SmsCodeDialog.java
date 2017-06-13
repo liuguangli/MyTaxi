@@ -2,6 +2,7 @@ package com.dalimao.mytaxi.account.view;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -30,6 +31,7 @@ import com.dalimao.mytaxi.common.http.impl.BaseResponse;
 import com.dalimao.mytaxi.common.http.impl.OkHttpClientImpl;
 import com.dalimao.mytaxi.common.storage.SharedPreferencesDao;
 import com.dalimao.mytaxi.common.util.ToastUtil;
+import com.dalimao.mytaxi.main.view.MainActivity;
 import com.google.gson.Gson;
 
 import java.lang.ref.SoftReference;
@@ -49,11 +51,12 @@ public class SmsCodeDialog extends Dialog  implements  ISmsCodeDialogView{
     private View mErrorView;
     private TextView mPhoneTv;
     private ISmsCodeDialogPresenter mPresenter;
+    private MainActivity mainActivity;
 
     /**
      *  验证码倒计时
      */
-    private CountDownTimer mCountDownTimer = new CountDownTimer(10000,1000) {
+    private CountDownTimer mCountDownTimer = new CountDownTimer(60000,1000) {
         @Override
         public void onTick(long millisUntilFinished) {
 
@@ -74,7 +77,7 @@ public class SmsCodeDialog extends Dialog  implements  ISmsCodeDialogView{
 
 
 
-    public SmsCodeDialog(Context context, String phone) {
+    public SmsCodeDialog(MainActivity context, String phone) {
         this(context, R.style.Dialog);
         // 上一个界面传来的手机号
         this.mPhone = phone;
@@ -84,7 +87,7 @@ public class SmsCodeDialog extends Dialog  implements  ISmsCodeDialogView{
                 SharedPreferencesDao.FILE_ACCOUNT);
         IAccountManager iAccountManager = new AccountManagerImpl(httpClient, dao);
         mPresenter = new SmsCodeDialogPresenterImpl(this, iAccountManager);
-
+       this.mainActivity = context;
     }
 
 
@@ -252,12 +255,23 @@ public class SmsCodeDialog extends Dialog  implements  ISmsCodeDialogView{
             CreatePasswordDialog dialog =
                     new CreatePasswordDialog(getContext(), mPhone);
             dialog.show();
+            dialog.setOnDismissListener(new OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    SmsCodeDialog.this.dismiss();
+                }
+            });
 
         } else {
             // 用户存在 ，进入登录
-            LoginDialog dialog = new LoginDialog(getContext(), mPhone);
+            LoginDialog dialog = new LoginDialog(mainActivity, mPhone);
             dialog.show();
-
+            dialog.setOnDismissListener(new OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    SmsCodeDialog.this.dismiss();
+                }
+            });
         }
     }
 }

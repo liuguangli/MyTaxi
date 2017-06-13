@@ -38,6 +38,7 @@
     <string name="call">呼叫快车</string>
     <string name="cancel">取消</string>
     <string name="route_info">全程%1$d公里，预计%2$.2f元，%3$d分钟到达</string>
+    <string name="route_info_calling">正在呼叫，全程%1$d公里，预计%2$.2f元，%3$d分钟到达</string>
     <string name="calling_driver">正在呼叫附近司机</string>
     <string name="accept_info">司机：%1$s(车牌:%2$s)已经接单,全程%3$.2f公里，%4$d分钟到达</string>
     <string name="driving_info">司机：%1$s(车牌:%2$s)，行程中,还剩%3$.2f公里，%4$d分钟到达</string>

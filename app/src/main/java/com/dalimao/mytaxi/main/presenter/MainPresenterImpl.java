@@ -7,6 +7,7 @@ import com.dalimao.mytaxi.account.model.response.LoginResponse;
 import com.dalimao.mytaxi.common.databus.RegisterBus;
 import com.dalimao.mytaxi.common.http.biz.BaseBizResponse;
 import com.dalimao.mytaxi.common.lbs.LocationInfo;
+import com.dalimao.mytaxi.common.util.LogUtil;
 import com.dalimao.mytaxi.main.model.IMainManager;
 import com.dalimao.mytaxi.main.model.bean.Order;
 import com.dalimao.mytaxi.main.model.response.NearDriversResponse;
@@ -112,9 +113,10 @@ public class MainPresenterImpl implements IMainPresenter {
         if (response.getState() == OrderStateOptResponse.ORDER_STATE_CREATE) {
             // 呼叫司机
             if (response.getCode() == BaseBizResponse.STATE_OK) {
-                view.showCallDriverSuc();
                 // 保存当前的订单
                 mCurrentOrder = response.getData();
+                // todo 接口增加参数
+                view.showCallDriverSuc(mCurrentOrder);
             } else {
                 view.showCallDriverFail();
             }
@@ -154,8 +156,8 @@ public class MainPresenterImpl implements IMainPresenter {
             } else {
                 view.showPayFail();
             }
-
         }
+        LogUtil.d("MainPresenterImpl", "getProcessingOrder" + mCurrentOrder);
     }
 
 
@@ -215,6 +217,15 @@ public class MainPresenterImpl implements IMainPresenter {
         if (mCurrentOrder != null) {
             mainManager.pay(mCurrentOrder.getOrderId());
         }
+    }
+
+    /**
+     *  todo 获取正在处理中的订单
+     */
+    @Override
+    public void getProcessingOrder() {
+        mainManager.getProcessingOrder();
+        LogUtil.d("MainPresenterImpl", "getProcessingOrder");
     }
 
 }

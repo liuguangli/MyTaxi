@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity
     private Button mBtnPay;
     private float mCost;
     private Bitmap mLocationBit;
+    private boolean mIsLocate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +135,9 @@ public class MainActivity extends AppCompatActivity
                 updateLocationToServer(locationInfo);
                 // 首次定位，添加当前位置的标记
                 addLocationMarker();
+                mIsLocate = true;
+                // TODO:  获取进行中的订单
+                getProcessingOrder();
             }
 
 
@@ -299,8 +303,8 @@ public class MainActivity extends AppCompatActivity
             mPresenter.callDriver(mPushKey, mCost, mStartLocation, mEndLocation);
         } else {
             // 未登录，先登录
-            mPresenter.loginByToken();
             ToastUtil.show(this, getString(R.string.pls_login));
+            showPhoneInputDialog();
         }
     }
 
@@ -340,23 +344,7 @@ public class MainActivity extends AppCompatActivity
                 //  记录终点
                 mEndLocation = results.get(position);
                 // 绘制路径
-                showRoute(mStartLocation, mEndLocation);
-            }
-        });
-        mEndAdapter.notifyDataSetChanged();
-    }
-
-    //  绘制起点终点路径
-    private void showRoute(final LocationInfo mStartLocation,
-                           final LocationInfo mEndLocation) {
-
-        mLbsLayer.clearAllMarkers();
-        addStartMarker();
-        addEndMarker();
-        mLbsLayer.driverRoute(mStartLocation,
-                mEndLocation,
-                Color.GREEN,
-                new ILbsLayer.OnRouteCompleteListener() {
+                showRoute(mStartLocation, mEndLocation, new ILbsLayer.OnRouteCompleteListener() {
                     @Override
                     public void onComplete(RouteInfo result) {
                         LogUtil.d(TAG, "driverRoute: " + result);
@@ -375,6 +363,27 @@ public class MainActivity extends AppCompatActivity
                         mTips.setText(infoString);
                     }
                 });
+            }
+        });
+        mEndAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 绘制起点终点路径
+     * todo: listener 作为参数出入
+      */
+
+    private void showRoute(final LocationInfo mStartLocation,
+                           final LocationInfo mEndLocation, ILbsLayer.OnRouteCompleteListener listener) {
+
+        mLbsLayer.clearAllMarkers();
+        addStartMarker();
+        addEndMarker();
+        mLbsLayer.driverRoute(mStartLocation,
+                mEndLocation,
+                Color.GREEN,
+                listener
+                );
     }
 
 
@@ -479,9 +488,22 @@ public class MainActivity extends AppCompatActivity
         if (mStartLocation != null) {
             updateLocationToServer(mStartLocation);
         }
-
+        //todo 获取正在进行中的订单
+        getProcessingOrder();
     }
 
+    /**
+     *  todo 获取正在进行中的订单
+     */
+    private void getProcessingOrder() {
+        /**
+         *  满足： 已经登录、已经定位两个条件，执行 getProcessingOrder
+         */
+        if (mIsLogin && mIsLocate) {
+            mPresenter.getProcessingOrder();
+        }
+
+    }
     /**
      * 显示附近司机
      *
@@ -508,14 +530,44 @@ public class MainActivity extends AppCompatActivity
         mLbsLayer.addOrUpdateMarker(locationInfo, mDriverBit);
     }
 
+
+
     /**
-     * 呼叫司机成功发出
+     * todo 呼叫司机成功发出
      */
     @Override
-    public void showCallDriverSuc() {
+    public void showCallDriverSuc(Order order) {
         mLoadingArea.setVisibility(View.GONE);
         mTips.setVisibility(View.VISIBLE);
         mTips.setText(getString(R.string.show_call_suc));
+        // todo 显示路径信息
+        if (order.getEndLongitude()!= 0 ||
+                order.getDriverLatitude() != 0) {
+            mEndLocation = new LocationInfo(order.getEndLatitude(), order.getEndLongitude());
+
+            // 绘制路径
+            showRoute(mStartLocation, mEndLocation, new ILbsLayer.OnRouteCompleteListener() {
+                @Override
+                public void onComplete(RouteInfo result) {
+                    LogUtil.d(TAG, "driverRoute: " + result);
+
+
+                    mLbsLayer.moveCamera(mStartLocation, mEndLocation);
+                    // 显示操作区
+                    showOptArea();
+                    mCost = result.getTaxiCost();
+                    String infoString = getString(R.string.route_info_calling);
+                    infoString = String.format(infoString,
+                            new Float(result.getDistance()).intValue(),
+                            mCost,
+                            result.getDuration());
+                    mTips.setVisibility(View.VISIBLE);
+                    mTips.setText(infoString);
+                    mBtnCall.setEnabled(false);
+                }
+            });
+        }
+        LogUtil.d(TAG,"showCallDriverSuc: " + order);
     }
 
     @Override
@@ -591,6 +643,10 @@ public class MainActivity extends AppCompatActivity
 
 
                         mTips.setText(stringBuilder.toString());
+                        // todo 显示操作区
+                        showOptArea();
+                        // 呼叫不可点击
+                        mBtnCall.setEnabled(false);
 
                     }
                 });
@@ -604,11 +660,26 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void showDriverArriveStart(Order mCurrentOrder) {
 
+        showOptArea();
         String arriveTemp = getString(R.string.driver_arrive);
         mTips.setText(String.format(arriveTemp,
                 mCurrentOrder.getDriverName(),
                 mCurrentOrder.getCarNo()));
+        mBtnCall.setEnabled(false);
+        mBtnCancel.setEnabled(true);
+        // 清除地图标记
+        mLbsLayer.clearAllMarkers();
+        /**
+         * 添加司机标记
+         */
 
+        final LocationInfo driverLocation =
+                new LocationInfo(mCurrentOrder.getDriverLatitude(),
+                        mCurrentOrder.getDriverLongitude());
+
+        showLocationChange(driverLocation);
+        // 显示我的位置
+        addLocationMarker();
     }
 
     /**
@@ -658,6 +729,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * 显示到达终点
+     *
      * @param order
      */
     @Override
@@ -667,6 +739,10 @@ public class MainActivity extends AppCompatActivity
                 order.getCost(),
                 order.getDriverName(),
                 order.getCarNo());
+        // todo 显示操作区
+        showOptArea();
+        mBtnCancel.setVisibility(View.GONE);
+        mBtnCall.setVisibility(View.GONE);
         mTips.setText(tips);
         mBtnPay.setVisibility(View.VISIBLE);
     }
@@ -678,9 +754,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void updateDriver2EndRoute(LocationInfo locationInfo, final Order order) {
+        // todo 终点位置从 order 中获取
+        if (order.getEndLongitude() != 0 ||
+            order.getEndLatitude() != 0 ) {
+            mEndLocation = new LocationInfo(order.getEndLatitude(), order.getEndLongitude());
+        }
         mLbsLayer.clearAllMarkers();
         addEndMarker();
         showLocationChange(locationInfo);
+        addLocationMarker();
         mLbsLayer.driverRoute(locationInfo, mEndLocation, Color.GREEN, new ILbsLayer.OnRouteCompleteListener() {
             @Override
             public void onComplete(RouteInfo result) {
@@ -691,6 +773,10 @@ public class MainActivity extends AppCompatActivity
                         order.getCarNo(),
                         result.getDistance(),
                         result.getDuration()));
+                // 显示操作区
+                showOptArea();
+                mBtnCancel.setEnabled(false);
+                mBtnCall.setEnabled(false);
             }
         });
         // 聚焦
@@ -758,8 +844,17 @@ public class MainActivity extends AppCompatActivity
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                RxBus.getInstance().unRegister(mPresenter);
+                RxBus.getInstance().register(mPresenter);
             }
         });
+        RxBus.getInstance().unRegister(mPresenter);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+
 }

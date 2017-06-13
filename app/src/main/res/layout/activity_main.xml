@@ -88,6 +88,7 @@
                 android:id="@+id/end"
                 android:hint="@string/where_are_you_go"
                 android:textSize="@dimen/text_size_normal"
+                android:textColorHint="@color/color_dark_gray"
                 android:textColor="@color/color_text_normal"
                 />
         </LinearLayout>

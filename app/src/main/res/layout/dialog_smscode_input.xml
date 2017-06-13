@@ -55,6 +55,7 @@
             android:enabled="false"
             android:layout_marginBottom="12dp"
             android:textSize="@dimen/text_size_small"
+            android:textColor="@color/text_white"
             />
 
         <com.dalimao.corelibrary.VerificationCodeInput

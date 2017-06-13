@@ -46,6 +46,7 @@
              style="@style/Dialog.Input"
              android:id="@+id/pw"
              android:inputType="textPassword"
+              android:textColor="@color/color_text_normal"
             />
         <EditText
             android:layout_width="match_parent"
@@ -54,6 +55,7 @@
             style="@style/Dialog.Input"
             android:id="@+id/pw1"
             android:inputType="textPassword"
+            android:textColor="@color/color_text_normal"
             />
         <ProgressBar
             android:layout_width="wrap_content"

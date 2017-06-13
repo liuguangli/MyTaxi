@@ -30,7 +30,9 @@
             android:value="556e51b86c4e821c7a296272ea9f5b76" />
         <activity
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:name=".splash.SplashActivity">
+            android:name=".splash.SplashActivity"
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

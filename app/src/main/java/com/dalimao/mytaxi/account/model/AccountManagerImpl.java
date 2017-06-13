@@ -180,7 +180,6 @@ public class AccountManagerImpl implements IAccountManager {
                 Log.d(TAG, response.getData());
 
                 RegisterResponse registerResponse = new RegisterResponse();
-
                 if (response.getCode() == BaseResponse.STATE_OK) {
                     BaseBizResponse bizRes =
                             new Gson().fromJson(response.getData(),

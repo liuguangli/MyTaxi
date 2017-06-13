@@ -12,6 +12,8 @@ public class Order {
     private String phone;
     private double driverLatitude;
     private double driverLongitude;
+    private double endLatitude;
+    private double endLongitude;
     private double driverRotation;
     private String driverName;
     private String carNo;
@@ -129,5 +131,21 @@ public class Order {
 
     public void setEndAddr(String endAddr) {
         this.endAddr = endAddr;
+    }
+
+    public double getEndLatitude() {
+        return endLatitude;
+    }
+
+    public void setEndLatitude(double endLatitude) {
+        this.endLatitude = endLatitude;
+    }
+
+    public double getEndLongitude() {
+        return endLongitude;
+    }
+
+    public void setEndLongitude(double endLongitude) {
+        this.endLongitude = endLongitude;
     }
 }

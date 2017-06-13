@@ -12,6 +12,7 @@ import com.dalimao.mytaxi.common.http.impl.BaseRequest;
 import com.dalimao.mytaxi.common.lbs.LocationInfo;
 import com.dalimao.mytaxi.common.storage.SharedPreferencesDao;
 import com.dalimao.mytaxi.common.util.LogUtil;
+import com.dalimao.mytaxi.main.model.bean.Order;
 import com.dalimao.mytaxi.main.model.response.NearDriversResponse;
 import com.dalimao.mytaxi.main.model.response.OrderStateOptResponse;
 import com.google.gson.Gson;
@@ -189,6 +190,52 @@ public class MainMangerImpl implements IMainManager{
 
                 LogUtil.d(TAG, "pay order: " + response.getData());
                 return orderStateOptResponse;
+            }
+        });
+    }
+
+
+    /**
+     *  todo 获取进行中的订单
+     */
+
+    @Override
+    public void getProcessingOrder() {
+        RxBus.getInstance().chainProcess(new Func1() {
+            @Override
+            public Object call(Object o) {
+                /**
+                 * 获取 uid
+                 */
+
+                SharedPreferencesDao sharedPreferencesDao =
+                        new SharedPreferencesDao(MyTaxiApplication.getInstance(),
+                                SharedPreferencesDao.FILE_ACCOUNT);
+                Account account =
+                        (Account) sharedPreferencesDao.get(SharedPreferencesDao.KEY_ACCOUNT,
+                                Account.class);
+                String uid = account.getUid();
+                IRequest request = new BaseRequest(API.Config.getDomain()
+                        + API.GET_PROCESSING_ORDER);
+                request.setBody("uid", uid);
+
+                IResponse response = mHttpClient.get(request, false);
+                LogUtil.d(TAG, "getProcessingOrder order: " + response.getData());
+                if (response.getCode() == BaseBizResponse.STATE_OK) {
+                    /**
+                     * 解析订单数据，封装到 OrderStateOptResponse
+                     */
+                    OrderStateOptResponse orderStateOptResponse =
+                            new Gson().fromJson(response.getData(), OrderStateOptResponse.class);
+                    orderStateOptResponse.setCode(response.getCode());
+                    orderStateOptResponse.setState(orderStateOptResponse.getData().getState());
+                    LogUtil.d(TAG, "getProcessingOrder order state=" + orderStateOptResponse.getState());
+                    return orderStateOptResponse;
+                }
+
+
+
+                return null;
             }
         });
     }

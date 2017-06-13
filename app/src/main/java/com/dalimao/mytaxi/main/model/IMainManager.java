@@ -44,4 +44,9 @@ public interface IMainManager {
      */
     void pay(String orderId);
 
+    /**
+     *  todo 获取正在处理中的订单
+     */
+    void getProcessingOrder();
+
 }
