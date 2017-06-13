@@ -48,7 +48,7 @@ public interface IMainPresenter {
     void pay();
 
     /**
-     *  todo 获取正在处理中的订单
+     *  获取正在处理中的订单
      */
     void getProcessingOrder();
 }

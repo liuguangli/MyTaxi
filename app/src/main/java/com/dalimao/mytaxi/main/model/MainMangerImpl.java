@@ -196,7 +196,7 @@ public class MainMangerImpl implements IMainManager{
 
 
     /**
-     *  todo 获取进行中的订单
+     *  获取进行中的订单
      */
 
     @Override
@@ -227,10 +227,12 @@ public class MainMangerImpl implements IMainManager{
                      */
                     OrderStateOptResponse orderStateOptResponse =
                             new Gson().fromJson(response.getData(), OrderStateOptResponse.class);
-                    orderStateOptResponse.setCode(response.getCode());
-                    orderStateOptResponse.setState(orderStateOptResponse.getData().getState());
-                    LogUtil.d(TAG, "getProcessingOrder order state=" + orderStateOptResponse.getState());
-                    return orderStateOptResponse;
+                    if (orderStateOptResponse.getCode() == BaseBizResponse.STATE_OK) {
+                        orderStateOptResponse.setState(orderStateOptResponse.getData().getState());
+                        LogUtil.d(TAG, "getProcessingOrder order state=" + orderStateOptResponse.getState());
+                        return orderStateOptResponse;
+                    }
+
                 }
 
 

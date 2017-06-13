@@ -66,6 +66,7 @@ import cn.bmob.v3.BmobInstallation;
 public class MainActivity extends AppCompatActivity
         implements IMainView {
     private final static String TAG = "MainActivity";
+    private static final String LOCATION_END = "10000end";
     private IMainPresenter mPresenter;
     private ILbsLayer mLbsLayer;
     private Bitmap mDriverBit;
@@ -136,7 +137,7 @@ public class MainActivity extends AppCompatActivity
                 // 首次定位，添加当前位置的标记
                 addLocationMarker();
                 mIsLocate = true;
-                // TODO:  获取进行中的订单
+                //  获取进行中的订单
                 getProcessingOrder();
             }
 
@@ -343,6 +344,7 @@ public class MainActivity extends AppCompatActivity
                 DevUtil.closeInputMethod(MainActivity.this);
                 //  记录终点
                 mEndLocation = results.get(position);
+                mEndLocation.setKey(LOCATION_END);
                 // 绘制路径
                 showRoute(mStartLocation, mEndLocation, new ILbsLayer.OnRouteCompleteListener() {
                     @Override
@@ -370,11 +372,12 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * 绘制起点终点路径
-     * todo: listener 作为参数出入
+     *
       */
 
     private void showRoute(final LocationInfo mStartLocation,
-                           final LocationInfo mEndLocation, ILbsLayer.OnRouteCompleteListener listener) {
+                           final LocationInfo mEndLocation,
+                           ILbsLayer.OnRouteCompleteListener listener) {
 
         mLbsLayer.clearAllMarkers();
         addStartMarker();
@@ -488,12 +491,12 @@ public class MainActivity extends AppCompatActivity
         if (mStartLocation != null) {
             updateLocationToServer(mStartLocation);
         }
-        //todo 获取正在进行中的订单
+        // 获取正在进行中的订单
         getProcessingOrder();
     }
 
     /**
-     *  todo 获取正在进行中的订单
+     *  获取正在进行中的订单
      */
     private void getProcessingOrder() {
         /**
@@ -533,18 +536,21 @@ public class MainActivity extends AppCompatActivity
 
 
     /**
-     * todo 呼叫司机成功发出
+     * 呼叫司机成功发出
      */
     @Override
     public void showCallDriverSuc(Order order) {
         mLoadingArea.setVisibility(View.GONE);
         mTips.setVisibility(View.VISIBLE);
         mTips.setText(getString(R.string.show_call_suc));
-        // todo 显示路径信息
+        // 显示操作区
+        showOptArea();
+        mBtnCall.setEnabled(false);
+        // 显示路径信息
         if (order.getEndLongitude()!= 0 ||
                 order.getDriverLatitude() != 0) {
             mEndLocation = new LocationInfo(order.getEndLatitude(), order.getEndLongitude());
-
+            mEndLocation.setKey(LOCATION_END);
             // 绘制路径
             showRoute(mStartLocation, mEndLocation, new ILbsLayer.OnRouteCompleteListener() {
                 @Override
@@ -553,8 +559,6 @@ public class MainActivity extends AppCompatActivity
 
 
                     mLbsLayer.moveCamera(mStartLocation, mEndLocation);
-                    // 显示操作区
-                    showOptArea();
                     mCost = result.getTaxiCost();
                     String infoString = getString(R.string.route_info_calling);
                     infoString = String.format(infoString,
@@ -563,7 +567,7 @@ public class MainActivity extends AppCompatActivity
                             result.getDuration());
                     mTips.setVisibility(View.VISIBLE);
                     mTips.setText(infoString);
-                    mBtnCall.setEnabled(false);
+
                 }
             });
         }
@@ -616,7 +620,7 @@ public class MainActivity extends AppCompatActivity
         final LocationInfo driverLocation =
                 new LocationInfo(order.getDriverLatitude(),
                         order.getDriverLongitude());
-
+        driverLocation.setKey(order.getKey());
         showLocationChange(driverLocation);
         // 显示我的位置
         addLocationMarker();
@@ -643,7 +647,7 @@ public class MainActivity extends AppCompatActivity
 
 
                         mTips.setText(stringBuilder.toString());
-                        // todo 显示操作区
+                        // 显示操作区
                         showOptArea();
                         // 呼叫不可点击
                         mBtnCall.setEnabled(false);
@@ -676,7 +680,7 @@ public class MainActivity extends AppCompatActivity
         final LocationInfo driverLocation =
                 new LocationInfo(mCurrentOrder.getDriverLatitude(),
                         mCurrentOrder.getDriverLongitude());
-
+         driverLocation.setKey(mCurrentOrder.getKey());
         showLocationChange(driverLocation);
         // 显示我的位置
         addLocationMarker();
@@ -720,6 +724,7 @@ public class MainActivity extends AppCompatActivity
 
         LocationInfo locationInfo =
                 new LocationInfo(order.getDriverLatitude(), order.getDriverLongitude());
+        locationInfo.setKey(order.getKey());
         // 路径规划绘制
         updateDriver2EndRoute(locationInfo, order);
         // 隐藏按钮
@@ -739,7 +744,7 @@ public class MainActivity extends AppCompatActivity
                 order.getCost(),
                 order.getDriverName(),
                 order.getCarNo());
-        // todo 显示操作区
+        // 显示操作区
         showOptArea();
         mBtnCancel.setVisibility(View.GONE);
         mBtnCall.setVisibility(View.GONE);
@@ -754,10 +759,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void updateDriver2EndRoute(LocationInfo locationInfo, final Order order) {
-        // todo 终点位置从 order 中获取
+        // 终点位置从 order 中获取
         if (order.getEndLongitude() != 0 ||
             order.getEndLatitude() != 0 ) {
             mEndLocation = new LocationInfo(order.getEndLatitude(), order.getEndLongitude());
+            mEndLocation.setKey(LOCATION_END);
         }
         mLbsLayer.clearAllMarkers();
         addEndMarker();

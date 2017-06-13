@@ -115,7 +115,7 @@ public class MainPresenterImpl implements IMainPresenter {
             if (response.getCode() == BaseBizResponse.STATE_OK) {
                 // 保存当前的订单
                 mCurrentOrder = response.getData();
-                // todo 接口增加参数
+                // 接口增加参数
                 view.showCallDriverSuc(mCurrentOrder);
             } else {
                 view.showCallDriverFail();
@@ -220,7 +220,7 @@ public class MainPresenterImpl implements IMainPresenter {
     }
 
     /**
-     *  todo 获取正在处理中的订单
+     * 获取正在处理中的订单
      */
     @Override
     public void getProcessingOrder() {
