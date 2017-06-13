@@ -758,8 +758,9 @@ public class MainActivity extends AppCompatActivity
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                RxBus.getInstance().unRegister(mPresenter);
+                RxBus.getInstance().register(mPresenter);
             }
         });
+        RxBus.getInstance().unRegister(mPresenter);
     }
 }

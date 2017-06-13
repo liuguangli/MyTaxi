@@ -19,7 +19,7 @@ import com.dalimao.mytaxi.common.http.IHttpClient;
 import com.dalimao.mytaxi.common.http.impl.OkHttpClientImpl;
 import com.dalimao.mytaxi.common.storage.SharedPreferencesDao;
 import com.dalimao.mytaxi.common.util.ToastUtil;
-
+import com.dalimao.mytaxi.main.view.MainActivity;
 
 
 /**
@@ -36,8 +36,8 @@ public class CreatePasswordDialog extends Dialog implements ICreatePasswordDialo
     private TextView mTips;
     private String mPhoneStr;
     private ICreatePasswordDialogPresenter mPresenter;
-
-    public CreatePasswordDialog(Context context, String phone) {
+    private MainActivity mainActivity;
+    public CreatePasswordDialog(MainActivity context, String phone) {
         this(context, R.style.Dialog);
         // 上一个页面传来的手机号
         mPhoneStr = phone;
@@ -47,7 +47,7 @@ public class CreatePasswordDialog extends Dialog implements ICreatePasswordDialo
                         SharedPreferencesDao.FILE_ACCOUNT);
         IAccountManager accountManager =  new AccountManagerImpl(httpClient, dao);
         mPresenter = new CreatePasswordDialogPresenterImpl(this, accountManager);
-
+        this.mainActivity = context;
 
     }
 
@@ -163,6 +163,7 @@ public class CreatePasswordDialog extends Dialog implements ICreatePasswordDialo
         dismiss();
         ToastUtil.show(getContext(),
                 getContext().getString(R.string.login_suc));
+        mainActivity.showLoginSuc();
     }
 
     /**
