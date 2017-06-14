@@ -649,6 +649,7 @@ public class MainActivity extends AppCompatActivity
 
         LocationInfo locationInfo =
                 new LocationInfo(order.getDriverLatitude(), order.getDriverLongitude());
+        locationInfo.setKey(order.getKey());
         // 路径规划绘制
         updateDriver2EndRoute(locationInfo, order);
         // 隐藏按钮
