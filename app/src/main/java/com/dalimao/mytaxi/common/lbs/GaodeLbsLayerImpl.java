@@ -119,6 +119,9 @@ public class GaodeLbsLayerImpl implements ILbsLayer {
 
     @Override
     public void addOrUpdateMarker(LocationInfo locationInfo, Bitmap bitmap) {
+        if (markerMap == null) {
+            markerMap = new HashMap<>();
+        }
         Marker storedMarker = markerMap.get(locationInfo.getKey());
         LatLng latLng = new LatLng(locationInfo.getLatitude(),
                 locationInfo.getLongitude());
