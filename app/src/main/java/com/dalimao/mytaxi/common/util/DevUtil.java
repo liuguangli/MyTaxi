@@ -20,7 +20,12 @@ public class DevUtil {
     public static String UUID(Context context) {
         TelephonyManager tm = (TelephonyManager)context
                         .getSystemService(Context.TELEPHONY_SERVICE);
-        String deviceId = tm.getDeviceId();
+        String deviceId = "";
+        try {
+            tm.getDeviceId();
+        } catch (Exception e) {
+            LogUtil.d("UUID", e.getMessage());
+        }
         return deviceId + System.currentTimeMillis();
     }
     public static void closeInputMethod(Activity context) {
