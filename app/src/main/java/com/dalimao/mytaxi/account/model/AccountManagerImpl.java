@@ -164,13 +164,13 @@ public class AccountManagerImpl implements IAccountManager {
      * @param password
      */
     @Override
-    public void register(String phone, final String password) {
+    public void register(final String phone, final String password) {
         RxBus.getInstance().chainProcess(new Func1() {
             @Override
             public Object call(Object o) {
                 String url = API.Config.getDomain() + API.REGISTER;
                 IRequest request = new BaseRequest(url);
-                request.setBody("phone", password);
+                request.setBody("phone", phone);
                 request.setBody("password", password);
                 request.setBody("uid", DevUtil.UUID(MyTaxiApplication.getInstance()));
 
