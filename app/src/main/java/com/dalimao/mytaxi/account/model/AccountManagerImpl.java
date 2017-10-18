@@ -147,13 +147,13 @@ public class AccountManagerImpl implements IAccountManager {
      * @param password
      */
     @Override
-    public void register(String phone, final String password) {
+    public void register(final String phone, final String password) {
         new Thread() {
             @Override
             public void run() {
                 String url = API.Config.getDomain() + API.REGISTER;
                 IRequest request = new BaseRequest(url);
-                request.setBody("phone", password);
+                request.setBody("phone", phone);
                 request.setBody("password", password);
                 request.setBody("uid", DevUtil.UUID(MyTaxiApplication.getInstance()));
 
@@ -182,14 +182,14 @@ public class AccountManagerImpl implements IAccountManager {
      * @param password
      */
     @Override
-    public void login(String phone, final String password) {
+    public void login(final String phone, final String password) {
 
         new Thread() {
             @Override
             public void run() {
                 String url = API.Config.getDomain() + API.LOGIN;
                 IRequest request = new BaseRequest(url);
-                request.setBody("phone", password);
+                request.setBody("phone", phone);
                 request.setBody("password", password);
 
 
