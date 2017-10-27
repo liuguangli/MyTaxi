@@ -113,5 +113,4 @@
 避免使用"px"作为单位。
 
 # 项目成员
-大利猫，orange，李松平，风筝与太阳，cpen5，JiannaiJ，赵竹子
-
+大利猫，orange，李松平，风筝与太阳，cpen5，JiannaiJ，赵竹子,周宇
