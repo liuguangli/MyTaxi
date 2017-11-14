@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MyTaxi</string>
+    <string name="splash_title">打车出行</string>
+    <string name="splash_message">美好一天，平安出行 </string>
 </resources>
