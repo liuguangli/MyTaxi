@@ -1,4 +1,4 @@
-# 1 代码规范
+﻿# 1 代码规范
 ## 1.1     Class 命名
  任何类名都应该使用 UpperCamelCase （驼峰法）命名, 例如:
 
@@ -113,5 +113,5 @@
 避免使用"px"作为单位。
 
 # 项目成员
-大利猫，陈海琼，orange，李松平，风筝与太阳，cpen5，JiannaiJ，赵竹子,周宇,机器人嘎嘎ing,小豪,棉棒糖，miyuexingchen，达螺丝，krido, zhanlu, vigroid, SvenHe，黄武超
+大利猫，陈海琼，orange，李松平，风筝与太阳，cpen5，JiannaiJ，赵竹子,周宇,机器人嘎嘎ing,小豪,棉棒糖，miyuexingchen，达螺丝，krido, zhanlu, vigroid, SvenHe，黄武超，T圈M，
 
