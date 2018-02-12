@@ -8,4 +8,5 @@ public interface IResponse {
 
     String getData();
 
+    int getCode();
 }

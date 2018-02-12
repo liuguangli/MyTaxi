@@ -24,6 +24,8 @@ public class OkHttpClientImpl implements IHttpClient {
     public IResponse get(IRequest request, boolean forceCache) {
 
         /**解析业务参数*/
+        //指定请求方式为get
+        request.setMethod(IRequest.GET);
         //解析头部
         Map<String, String> header = request.getHeader();
         //OkHttp的Request.Builder
@@ -45,6 +47,7 @@ public class OkHttpClientImpl implements IHttpClient {
     @Override
     public IResponse post(IRequest request, boolean forceCache) {
 
+        request.setMethod(IRequest.POST);
         MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create(mediaType, request.getBody().toString());
         Map<String, String> header = request.getHeader();

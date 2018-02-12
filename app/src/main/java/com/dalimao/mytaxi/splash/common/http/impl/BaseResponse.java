@@ -19,6 +19,7 @@ public class BaseResponse implements IResponse {
         return data;
     }
 
+    @Override
     public int getCode() {
         return code;
     }
