@@ -78,6 +78,10 @@ public class SmsCodeDialog extends Dialog{
             mVerificationCodeInput.setEnabled(true);
             mLoading.setVisibility(View.GONE);
         } else {
+
+            mErrorView.setVisibility(View.GONE);
+            mLoading.setVisibility(View.VISIBLE);
+
             //检查用户是否存在
 
 
@@ -112,7 +116,7 @@ public class SmsCodeDialog extends Dialog{
                     break;
                 case SMS_CHECK_SUCCESS:
                     //验证码校验成功
-                    
+                    codeDialog.showVerifyState(true);
                     break;
                 case SMS_CHECK_FAILURE:
                     //验证码校验失败
