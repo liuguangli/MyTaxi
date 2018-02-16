@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
@@ -19,8 +21,14 @@ import com.dalimao.mytaxi.common.http.IHttpClient;
 import com.dalimao.mytaxi.common.http.IRequest;
 import com.dalimao.mytaxi.common.http.IResponse;
 import com.dalimao.mytaxi.common.http.api.API;
+import com.dalimao.mytaxi.common.http.biz.BaseBizResponse;
 import com.dalimao.mytaxi.common.http.impl.BaseRequest;
+import com.dalimao.mytaxi.common.http.impl.BaseResponse;
 import com.dalimao.mytaxi.common.http.impl.OkHttpClientImpl;
+import com.dalimao.mytaxi.common.util.ToastUtil;
+import com.google.gson.Gson;
+
+import java.lang.ref.SoftReference;
 
 /**
  * Created by jinny on 2018/2/13.
@@ -28,7 +36,12 @@ import com.dalimao.mytaxi.common.http.impl.OkHttpClientImpl;
 
 public class SmsCodeDialog extends Dialog{
 
-    private static final String TAG = "SmsCodeDialog";
+    private static final String TAG            = "SmsCodeDialog";
+    private static final int SMS_SEND_SUCCESS  = 1;
+    private static final int SMS_SEND_FAILURE  = -1;
+    private static final int SMS_CHECK_SUCCESS = 2;
+    private static final int SMS_CHECK_FAILURE = -2;
+
     private String mPhone;
     private Button mResentBtn;
     private VerificationCodeInput mVerificationCodeInput;
@@ -36,6 +49,7 @@ public class SmsCodeDialog extends Dialog{
     private View mErrorView;
     private TextView mPhoneTv;
     private IHttpClient mHttpClient;
+    private MyHandler myHandler;
 
     /**
      * 验证码倒计时
@@ -56,11 +70,64 @@ public class SmsCodeDialog extends Dialog{
         }
     };
 
+    public void showVerifyState(boolean success) {
+
+        if (!success) {
+            //提示验证码错误
+            mErrorView.setVisibility(View.VISIBLE);
+            mVerificationCodeInput.setEnabled(true);
+            mLoading.setVisibility(View.GONE);
+        } else {
+            //检查用户是否存在
+
+
+        }
+    }
+
+    /**
+     * 接收子线程消息的Handler
+     */
+    static class MyHandler extends Handler {
+        //软引用
+        SoftReference<SmsCodeDialog> mCodeDialogSoftReference;
+
+        public MyHandler(SmsCodeDialog codeDialog) {
+            mCodeDialogSoftReference = new SoftReference<SmsCodeDialog>(codeDialog);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            SmsCodeDialog codeDialog = mCodeDialogSoftReference.get();
+            if (codeDialog == null) {
+                return;
+            }
+
+            //处理UI 变化
+            switch (msg.what) {
+                case SMS_SEND_SUCCESS:
+                    codeDialog.mCountDownTimer.start();
+                    break;
+                case SMS_SEND_FAILURE:
+                    ToastUtil.show(codeDialog.getContext(), codeDialog.getContext().getString(R.string.sms_send_fail));
+                    break;
+                case SMS_CHECK_SUCCESS:
+                    //验证码校验成功
+                    
+                    break;
+                case SMS_CHECK_FAILURE:
+                    //验证码校验失败
+                    codeDialog.showVerifyState(false);
+                    break;
+            }
+        }
+    }
+
     public SmsCodeDialog(Context context, String phone) {
         this(context, R.style.Dialog);
         /**上一个界面传来的手机号*/
         this.mPhone = phone;
         mHttpClient = new OkHttpClientImpl();
+        myHandler = new MyHandler(this);
     }
 
     public SmsCodeDialog(@NonNull Context context, @StyleRes int themeResId) {
@@ -105,6 +172,19 @@ public class SmsCodeDialog extends Dialog{
                 IResponse response = mHttpClient.get(request, false);
 
                 Log.i(TAG, response.getData());
+
+                /**解析之前，对Http的返回做一个判断*/
+                if (response.getCode() == BaseResponse.STATE_OK) {
+                    BaseBizResponse bizResponse = new Gson().fromJson(response.getData(), BaseBizResponse.class);
+
+                    if (bizResponse.getCode() == BaseBizResponse.STATE_OK) {
+                        myHandler.sendEmptyMessage(SMS_SEND_SUCCESS);
+                    } else {
+                        myHandler.sendEmptyMessage(SMS_SEND_FAILURE);
+                    }
+                } else {
+                    myHandler.sendEmptyMessage(SMS_SEND_FAILURE);
+                }
             }
         }.start();
     }
@@ -146,10 +226,39 @@ public class SmsCodeDialog extends Dialog{
         });
     }
 
-    private void commit(String code) {
+    private void commit(final String code) {
         showLoading();
 
-        //TODO： 网络请求校验验证码
+        /**
+         * 网络请求校验验证码
+         */
+        new Thread(){
+            @Override
+            public void run() {
+                String url = API.Config.getDomain() + API.CHECK_SMS_CODE;
+                IRequest request = new BaseRequest(url);
+                request.setBody("phone", mPhone);
+                request.setBody("code", code);
+
+                IResponse response = mHttpClient.get(request, false);
+
+                Log.i(TAG, response.getData());
+
+                /**解析之前，对Http的返回做一个判断*/
+                if (response.getCode() == BaseResponse.STATE_OK) {
+                    BaseBizResponse bizResponse = new Gson().fromJson(response.getData(), BaseBizResponse.class);
+
+                    if (bizResponse.getCode() == BaseBizResponse.STATE_OK) {
+                        myHandler.sendEmptyMessage(SMS_CHECK_SUCCESS);
+                    } else {
+                        myHandler.sendEmptyMessage(SMS_CHECK_FAILURE);
+                    }
+                } else {
+                    myHandler.sendEmptyMessage(SMS_CHECK_FAILURE);
+                }
+            }
+        }.start();
+
     }
 
     private void resend() {
