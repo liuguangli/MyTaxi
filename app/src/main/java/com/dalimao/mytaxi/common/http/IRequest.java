@@ -1,4 +1,4 @@
-package com.dalimao.mytaxi.splash.common.http;
+package com.dalimao.mytaxi.common.http;
 
 import java.util.Map;
 

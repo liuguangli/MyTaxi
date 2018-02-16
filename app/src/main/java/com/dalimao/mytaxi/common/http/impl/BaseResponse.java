@@ -1,6 +1,6 @@
-package com.dalimao.mytaxi.splash.common.http.impl;
+package com.dalimao.mytaxi.common.http.impl;
 
-import com.dalimao.mytaxi.splash.common.http.IResponse;
+import com.dalimao.mytaxi.common.http.IResponse;
 
 /**
  * Created by jinny on 2018/2/10.
