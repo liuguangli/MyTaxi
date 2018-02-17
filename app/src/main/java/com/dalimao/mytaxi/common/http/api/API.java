@@ -27,7 +27,8 @@ public class API {
     /**
      * 登录
      */
-    public static final String LOGIN = "/f34e28da5816433d/auth";
+    public static final String LOGIN            = "/f34e28da5816433d/auth";
+    public static final String LOGIN_BY_TOKEN   = "/f34e28da5816433d/login";
 
 
     /**

@@ -8,7 +8,7 @@ public class Account {
     private String token;
     private String uid;
     private String account;
-    private String expired;
+    private long expired;
 
     public String getToken() {
         return token;
@@ -34,11 +34,11 @@ public class Account {
         this.account = account;
     }
 
-    public String getExpired() {
+    public long getExpired() {
         return expired;
     }
 
-    public void setExpired(String expired) {
+    public void setExpired(long expired) {
         this.expired = expired;
     }
 }
