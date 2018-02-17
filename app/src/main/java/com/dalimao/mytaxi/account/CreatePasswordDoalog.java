@@ -16,7 +16,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.dalimao.mytaxi.MyTaxiApplication;
 import com.dalimao.mytaxi.R;
+import com.dalimao.mytaxi.account.response.Account;
+import com.dalimao.mytaxi.account.response.LoginResponse;
 import com.dalimao.mytaxi.common.http.IHttpClient;
 import com.dalimao.mytaxi.common.http.IRequest;
 import com.dalimao.mytaxi.common.http.IResponse;
@@ -25,7 +28,9 @@ import com.dalimao.mytaxi.common.http.biz.BaseBizResponse;
 import com.dalimao.mytaxi.common.http.impl.BaseRequest;
 import com.dalimao.mytaxi.common.http.impl.BaseResponse;
 import com.dalimao.mytaxi.common.http.impl.OkHttpClientImpl;
+import com.dalimao.mytaxi.common.storage.SharedPreferencesDao;
 import com.dalimao.mytaxi.common.util.DevUtil;
+import com.dalimao.mytaxi.common.util.ToastUtil;
 import com.google.gson.Gson;
 
 import java.lang.ref.SoftReference;
@@ -37,9 +42,10 @@ import java.lang.ref.SoftReference;
 
 public class CreatePasswordDoalog extends Dialog{
 
-    private static final String TAG = "CreatePasswordDoalog";
+    private static final String TAG           = "CreatePasswordDoalog";
     private static final int REGISTER_SUCCESS = 1;
-    private static final int SERVER_FAILURE = 100;
+    private static final int SERVER_FAILURE   = 100;
+    private static final int LOGIN_SUCCESS    = 2;
     private TextView mTitle;
     private TextView mPhone;
     private EditText mPw;
@@ -74,11 +80,24 @@ public class CreatePasswordDoalog extends Dialog{
                 case REGISTER_SUCCESS:
                     dialog.showRegisterSuccess();
                     break;
+                case LOGIN_SUCCESS:
+                    dialog.showLoginSuccess();
+                    break;
                 case SERVER_FAILURE:
-
+                    dialog.showServerError();
                     break;
             }
         }
+    }
+
+    private void showLoginSuccess() {
+        dismiss();
+        ToastUtil.show(getContext(),getContext().getString(R.string.login_suc));
+    }
+
+    private void showServerError() {
+        mTips.setTextColor(getContext().getResources().getColor(R.color.error_red));
+        mTips.setText(getContext().getString(R.string.error_server));
     }
 
     /**
@@ -91,10 +110,41 @@ public class CreatePasswordDoalog extends Dialog{
         mTips.setTextColor(getContext().getResources().getColor(R.color.color_text_normal));
         mTips.setText(getContext().getString(R.string.register_suc_and_loging));
 
-        //请求网络，完成自动登录
+        /**请求网络，完成自动登录*/
+        new Thread(){
+            @Override
+            public void run() {
+                String url = API.Config.getDomain() + API.LOGIN;
+                IRequest request = new BaseRequest(url);
+                request.setBody("phone", mPhoneStr);
+                String password = mPw.getText().toString();
+                request.setBody("password", password);
+
+                IResponse response = mHttpClient.post(request, false);
+                Log.i(TAG, response.getData());
+                if (response.getCode() == BaseResponse.STATE_OK) {
+                    LoginResponse bizRes = new Gson().fromJson(response.getData(), LoginResponse.class);
+                    if (bizRes.getCode() == BaseBizResponse.STATE_OK) {
+                        //保存登录信息
+                        Account account = bizRes.getData();
+                        SharedPreferencesDao dao = new SharedPreferencesDao(MyTaxiApplication.getInstance(),
+                                SharedPreferencesDao.FILE_ACCOUNT);
+                        dao.save(SharedPreferencesDao.KEY_ACCOUNT, account);
+
+                        //通知UI
+                        mHandler.sendEmptyMessage(LOGIN_SUCCESS);
 
 
 
+
+                    } else {
+                        mHandler.sendEmptyMessage(SERVER_FAILURE);
+                    }
+                } else {
+                    mHandler.sendEmptyMessage(SERVER_FAILURE);
+                }
+            }
+        }.start();
     }
 
     public CreatePasswordDoalog(Context context,String phone) {

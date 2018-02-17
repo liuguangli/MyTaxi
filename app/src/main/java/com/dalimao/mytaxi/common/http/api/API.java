@@ -24,6 +24,11 @@ public class API {
      * 注册
      */
     public static final String REGISTER         = "/f34e28da5816433d/register";
+    /**
+     * 登录
+     */
+    public static final String LOGIN = "/f34e28da5816433d/auth";
+
 
     /**
      * 配置域名信息

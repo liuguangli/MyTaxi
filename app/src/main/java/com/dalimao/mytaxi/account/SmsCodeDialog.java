@@ -123,8 +123,8 @@ public class SmsCodeDialog extends Dialog{
             createPasswordDoalog.show();
         } else {
             /**用户存在，进入登录*/
-
-
+            LoginDialog loginDialog = new LoginDialog(getContext(), mPhone);
+            loginDialog.show();
         }
     }
 
