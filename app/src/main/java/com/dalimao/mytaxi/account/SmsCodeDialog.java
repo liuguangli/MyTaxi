@@ -36,11 +36,14 @@ import java.lang.ref.SoftReference;
 
 public class SmsCodeDialog extends Dialog{
 
-    private static final String TAG            = "SmsCodeDialog";
-    private static final int SMS_SEND_SUCCESS  = 1;
-    private static final int SMS_SEND_FAILURE  = -1;
-    private static final int SMS_CHECK_SUCCESS = 2;
-    private static final int SMS_CHECK_FAILURE = -2;
+    private static final String TAG              = "SmsCodeDialog";
+    private static final int SMS_SEND_SUCCESS    = 1;
+    private static final int SMS_SEND_FAILURE    = -1;
+    private static final int SMS_CHECK_SUCCESS   = 2;
+    private static final int SMS_CHECK_FAILURE   = -2;
+    private static final int USER_EXIST          = 3;
+    private static final int USER_NOT_EXIST      = -3;
+    private static final int USER_SERVER_FAILURE = 100;
 
     private String mPhone;
     private Button mResentBtn;
@@ -82,7 +85,44 @@ public class SmsCodeDialog extends Dialog{
             mErrorView.setVisibility(View.GONE);
             mLoading.setVisibility(View.VISIBLE);
 
-            //检查用户是否存在
+            /**检查用户是否存在*/
+            new Thread(){
+                @Override
+                public void run() {
+                    String url = API.Config.getDomain() + API.CHECK_USER_EXIST;
+                    IRequest request = new BaseRequest(url);
+                    request.setBody("phone", mPhone);
+                    IResponse response = mHttpClient.get(request, false);
+                    Log.i(TAG, response.getData());
+                    if (response.getCode() == BaseResponse.STATE_OK) {
+                        BaseBizResponse bizResponse = new Gson().fromJson(response.getData(), BaseBizResponse.class);
+
+                        if (bizResponse.getCode() == BaseBizResponse.STATE_USER_EXIST) {
+                            myHandler.sendEmptyMessage(USER_EXIST);
+                        } else if (bizResponse.getCode() == BaseBizResponse.STATE_USER_NOT_EXIST) {
+                            myHandler.sendEmptyMessage(USER_NOT_EXIST);
+                        }
+                    } else {
+                        myHandler.sendEmptyMessage(USER_SERVER_FAILURE);
+                    }
+                }
+            }.start();
+        }
+    }
+
+
+    public void showUserExist(boolean exist) {
+
+        mLoading.setVisibility(View.GONE);
+        mErrorView.setVisibility(View.GONE);
+        dismiss();
+
+        if (!exist) {
+            /**用户不存在，进入注册*/
+            CreatePasswordDoalog createPasswordDoalog = new CreatePasswordDoalog(getContext(), mPhone);
+            createPasswordDoalog.show();
+        } else {
+            /**用户存在，进入登录*/
 
 
         }
@@ -109,9 +149,11 @@ public class SmsCodeDialog extends Dialog{
             //处理UI 变化
             switch (msg.what) {
                 case SMS_SEND_SUCCESS:
+                    //信息发送成功
                     codeDialog.mCountDownTimer.start();
                     break;
                 case SMS_SEND_FAILURE:
+                    //信息发送失败
                     ToastUtil.show(codeDialog.getContext(), codeDialog.getContext().getString(R.string.sms_send_fail));
                     break;
                 case SMS_CHECK_SUCCESS:
@@ -121,6 +163,18 @@ public class SmsCodeDialog extends Dialog{
                 case SMS_CHECK_FAILURE:
                     //验证码校验失败
                     codeDialog.showVerifyState(false);
+                    break;
+                case USER_EXIST:
+                    //用户存在
+                    codeDialog.showUserExist(true);
+                    break;
+                case USER_NOT_EXIST:
+                    //用户不存在
+                    codeDialog.showUserExist(false);
+                    break;
+                case USER_SERVER_FAILURE:
+                    //服务器不存在，给个简单的提示
+                    ToastUtil.show(codeDialog.getContext(), codeDialog.getContext().getString(R.string.error_server));
                     break;
             }
         }
