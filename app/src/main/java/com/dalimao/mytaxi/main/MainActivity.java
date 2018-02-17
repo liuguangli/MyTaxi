@@ -109,14 +109,14 @@ public class MainActivity extends AppCompatActivity{
                                     showPhoneInputDialog();
                                 }
                             });
-                        } else {
-                            MainActivity.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ToastUtil.show(MainActivity.this, getString(R.string.error_server));
-                                }
-                            });
                         }
+                    } else {
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastUtil.show(MainActivity.this, getString(R.string.error_server));
+                            }
+                        });
                     }
                 }
             }.start();
