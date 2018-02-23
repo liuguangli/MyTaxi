@@ -25,6 +25,8 @@ public class SplashActivity extends AppCompatActivity {
             final ImageView logo = (ImageView) findViewById(R.id.logo);
             logo.setImageDrawable(anim);
             anim.start();
+
+            //test
         }
     }
 }
