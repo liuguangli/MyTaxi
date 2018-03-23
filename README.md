@@ -59,10 +59,10 @@
          // do stuff
         }
       }
-
+    
     }
 
-
+# 1.8 长度限制
 # 1.8 长度限制
 
 -  一行代码的长度：不要超过160个字符。
@@ -82,7 +82,7 @@
 
      activity_main, fragment_user,dialog_login_input.xml
 
-
+## 2.2 控件布局命名：模块名＋布局类型，小写字母使用下划线 ”_ ”分词。例如：goods_list_item。
 ## 2.2 控件布局命名：模块名＋布局类型，小写字母使用下划线 ”_ ”分词。例如：goods_list_item。
 
 ## 2.3 图片资源
@@ -115,6 +115,6 @@
 # 项目成员
 大利猫，陈海琼，orange，李松平，风筝与太阳，cpen5，JiannaiJ，赵竹子,周宇,机器人嘎嘎ing,小豪,
 棉棒糖，miyuexingchen，达螺丝，krido, zhanlu, vigroid, SvenHe，黄武超，詹徐照, WemtFox,intozhou，
-T圈M_233，Jeanne，vidya
+T圈M_233，Jeanne，vidya,  yuan
 
 
