@@ -355,7 +355,7 @@ public class GaodeLbsLayerImpl implements ILbsLayer {
                     mCity = aMapLocation.getCity();
                     // 地图已经激活，通知蓝点实时更新
                     mMapLocationChangeListener.onLocationChanged(aMapLocation);// 显示系统小蓝点
-                    LogUtil.d(TAG, "onLocationChanged");
+                    LogUtil.d(TAG, "onLocationChanged: Lat=" + aMapLocation.getLatitude() + ", Lon=" + aMapLocation.getLongitude());
                     LocationInfo locationInfo = new LocationInfo(aMapLocation.getLatitude(),
                             aMapLocation.getLongitude());
                     locationInfo.setName(aMapLocation.getPoiName());

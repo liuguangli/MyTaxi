@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -157,7 +158,7 @@ public class MainActivity extends AppCompatActivity
         mPushKey = installation.getInstallationId();
         // 启动推送服务
         BmobPush.startWork(this);
-
+        Log.d(TAG, "pushKey=" + mPushKey);
 
         //  初始化其他视图元素
         initViews();
