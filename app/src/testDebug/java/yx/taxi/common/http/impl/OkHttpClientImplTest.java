@@ -1,5 +1,7 @@
 package yx.taxi.common.http.impl;
 
+import com.google.gson.Gson;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,6 +20,21 @@ public class OkHttpClientImplTest {
 
     @Before
     public void setUp(){
+        Gson gson = new Gson();
+        String jsonString = "{\n" +
+                "  \"msg\": \"登录成功0885162973\", \n" +
+                "  \"code\": 200, \n" +
+                "  \"data\": {\n" +
+                "    \"uid\": \"sfsdfsjkwejasdf3242342\", \n" +
+                "    \"expired\": 1493626365811, \n" +
+                "    \"account\": \"15919496912\", \n" +
+                "    \"token\": \"12331493539965811\"\n" +
+                "  }\n" +
+                "}";
+        BaseBizResponse bizRes =
+                new Gson().fromJson(jsonString, BaseBizResponse.class);
+        Account data = bizRes.getData( );
+        System.out.println("setUp: "+data.getAccount());
         mOkHttpClient = new OkHttpClientImpl( );
         API.Config.setDebug(true);
     }
