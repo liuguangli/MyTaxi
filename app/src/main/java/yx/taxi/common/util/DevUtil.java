@@ -5,16 +5,13 @@ import android.content.Context;
 import android.telephony.TelephonyManager;
 import android.view.inputmethod.InputMethodManager;
 
-import yx.taxi.TaxiApplication;
-
 /**
  * Created by yangxiong on 2018/4/26/026.
  */
 
 public class DevUtil {
-    public static String UUID() {
-        TelephonyManager tm = (TelephonyManager) TaxiApplication.geTaxiApplication()
-                .getSystemService(Context.TELEPHONY_SERVICE);
+    public static String UUID(Context context) {
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         String deviceId = tm.getDeviceId();
         return deviceId + System.currentTimeMillis();
     }

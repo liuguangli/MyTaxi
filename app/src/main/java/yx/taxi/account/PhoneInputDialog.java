@@ -23,9 +23,11 @@ import yx.taxi.common.util.FormatUtil;
 public class PhoneInputDialog extends Dialog {
 
     private Button btnNext;
+    private Context context;
 
     public PhoneInputDialog(@NonNull Context context) {
         super(context);
+        this.context = context;
     }
     public PhoneInputDialog(@NonNull Context context, @StyleRes int themeResId) {
         super(context, themeResId);
@@ -41,6 +43,11 @@ public class PhoneInputDialog extends Dialog {
         View view = getLayoutInflater( ).inflate(R.layout.dialog_phone_input, null);
         setContentView(view);
         initView();
+    }
+
+    @Override
+    public void dismiss() {
+        super.dismiss( );
     }
 
     private void initView() {
@@ -66,8 +73,8 @@ public class PhoneInputDialog extends Dialog {
         btnNext.setOnClickListener(new View.OnClickListener( ) {
             @Override
             public void onClick(View v) {
-                dismiss();
-                SmsCodeDialog smsCodeDialog = new SmsCodeDialog(PhoneInputDialog.this.getContext(),etPhone.getText().toString());
+                PhoneInputDialog.this.dismiss();
+                SmsCodeDialog smsCodeDialog = new SmsCodeDialog(context,etPhone.getText().toString());
                 smsCodeDialog.show();
             }
         });

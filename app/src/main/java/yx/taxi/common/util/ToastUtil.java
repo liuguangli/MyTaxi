@@ -1,15 +1,14 @@
 package yx.taxi.common.util;
 
+import android.content.Context;
 import android.widget.Toast;
-
-import yx.taxi.TaxiApplication;
 
 /**
  * Created by yangxiong on 2018/4/26/026.
  */
 
 public class ToastUtil {
-    public static void show(String msg){
-        Toast.makeText(TaxiApplication.geTaxiApplication(), msg, Toast.LENGTH_SHORT).show( );
+    public static void show(Context context, String msg){
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show( );
     }
 }

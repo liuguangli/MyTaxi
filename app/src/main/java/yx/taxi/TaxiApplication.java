@@ -1,7 +1,6 @@
 package yx.taxi;
 
 import android.app.Application;
-import android.content.Context;
 
 /**
  * Created by yangxiong on 2018/4/26/026.
@@ -15,7 +14,7 @@ public class TaxiApplication extends Application {
         application = this;
     }
 
-    public static Context geTaxiApplication(){
-        return application.getApplicationContext();
+    public static TaxiApplication geTaxiApplication(){
+        return application;
     }
 }

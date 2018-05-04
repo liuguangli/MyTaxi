@@ -1,0 +1,17 @@
+http://httpbin.org/get?id=id
+GET
+0
+HTTP/1.1 200 OK
+12
+Connection: keep-alive
+Server: gunicorn/19.7.1
+Date: Thu, 26 Apr 2018 13:43:04 GMT
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Credentials: true
+X-Powered-By: Flask
+X-Processed-Time: 0
+Content-Length: 283
+Via: 1.1 vegur
+OkHttp-Sent-Millis: 1524750142454
+OkHttp-Received-Millis: 1524750142718

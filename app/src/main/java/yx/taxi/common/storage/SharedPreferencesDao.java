@@ -6,8 +6,6 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
-import yx.taxi.TaxiApplication;
-
 /**
  * Created by yangxiong on 2018/4/26/026.
  */
@@ -20,9 +18,8 @@ public class SharedPreferencesDao {
     /**
      *  初始化
      */
-    public SharedPreferencesDao(String fileName) {
-        sharedPreferences =
-                TaxiApplication.geTaxiApplication().getSharedPreferences(fileName, Context.MODE_PRIVATE);
+    public SharedPreferencesDao(Context context ,String fileName) {
+        sharedPreferences =context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
     }
     /**
      * 保存 k-v
