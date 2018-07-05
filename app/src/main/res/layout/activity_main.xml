@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+
+    <!--  地图容器-->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/map_container"
+        />
+
+    <!-- 标题栏-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/bg_white"
+        android:id="@+id/top"
+        >
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/user"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:id="@+id/im_user"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/city"
+            android:layout_centerInParent="true"
+            android:textSize="@dimen/text_size_normal"
+            android:text="@string/locating"
+            android:textColor="@color/color_text_normal"
+            />
+    </RelativeLayout>
+
+    <!-- 起点终点选择-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:padding="12dp"
+        android:background="@color/bg_white"
+        android:id="@+id/select_area"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/start"
+                android:textSize="@dimen/text_size_normal"
+                android:textColor="@color/color_text_normal"
+                />
+            <AutoCompleteTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/start"
+                android:textSize="@dimen/text_size_normal"
+                android:padding="12dp"
+                android:textColor="@color/color_text_normal"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/end"
+                android:textSize="@dimen/text_size_normal"
+                android:textColor="@color/color_text_normal"
+                />
+            <AutoCompleteTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/end"
+                android:hint="@string/where_are_you_go"
+                android:textSize="@dimen/text_size_normal"
+                android:textColorHint="@color/color_dark_gray"
+                android:textColor="@color/color_text_normal"
+                />
+        </LinearLayout>
+    </LinearLayout>
+    <!--  操作区 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/optArea"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:padding="12dp"
+        android:background="@color/bg_white"
+        android:orientation="vertical"
+        android:visibility="gone"
+        >
+        <!-- 状态提示区 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_normal"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/tips_info"
+                android:visibility="gone"
+                android:textColor="@color/color_text_normal"
+                />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/loading_area"
+                android:visibility="gone"
+                android:layout_gravity="center_horizontal">
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_normal"
+                    android:text="@string/calling_driver"
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/loading_text"
+                    android:textColor="@color/color_text_normal"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+        <!-- 操作按钮 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="@dimen/activity_vertical_margin"
+            android:weightSum="2"
+            >
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Dialog.Button"
+                android:text="@string/call"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:id="@+id/btn_call_driver"
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Dialog.Button"
+                android:text="@string/cancel"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:id="@+id/btn_cancel"
+                />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Dialog.Button"
+                android:text="@string/pay"
+                android:id="@+id/btn_pay"
+                android:layout_weight="1"
+                android:visibility="gone"
+                />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

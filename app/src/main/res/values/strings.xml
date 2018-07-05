@@ -2,4 +2,66 @@
     <string name="app_name">MyTaxi</string>
     <string name="splash_title">打车出行</string>
     <string name="splash_message">美好一天，平安出行 </string>
+    <string name="pls_input_phone">请输入手机号码</string>
+    <string name="login">登录</string>
+    <string name="next">下一步</string>
+    <string name="sms_code_input">输入验证码</string>
+    <string name="sms_code_send_phone">验证码已经发送至%s</string>
+    <string name="resend">重新发送</string>
+    <string name="after_time_resend">%d秒后重新发送</string>
+    <string name="create_pw">创建秘密</string>
+    <string name="pls_input_pw">请输入密码</string>
+    <string name="confirm">确认</string>
+    <string name="pls_input_pw_again">请再次输入密码</string>
+    <string name="input_pw">输入密码</string>
+    <string name="sending">正在向%s发送短信验证码</string>
+    <string name="sms_code_error">验证码错误</string>
+    <string name="register_suc_and_loging">注册成功，正在为您自动登录</string>
+    <string name="user_exist">用户已经存在</string>
+    <string name="password_is_null">密码不能为空</string>
+    <string name="password_is_not_equal">两次输入的密码不一样</string>
+    <string name="error_server"> 服务器繁忙 </string>
+    <string name="modify_pw">修改密码</string>
+    <string name="check_user">正在检查用户</string>
+    <string name="register">注册</string>
+    <string name="login_suc">登录成功</string>
+    <string name="password_error">密码错误</string>
+    <string name="sms_send_fail">服务器异常，验证码未发送成功</string>
+    <string name="token_invalid">登录过期</string>
+
+    <!--打车过程所有文案-->
+    <string name="where_are_you_go">您要去哪</string>
+    <string name="start">起点</string>
+    <string name="end">终点</string>
+    <string name="locating">定位中...</string>
+
+    <string name="call">呼叫快车</string>
+    <string name="cancel">取消</string>
+    <string name="route_info">全程%1$d公里，预计%2$.2f元，%3$d分钟到达</string>
+    <string name="route_info_calling">正在呼叫，全程%1$d公里，预计%2$.2f元，%3$d分钟到达</string>
+    <string name="calling_driver">正在呼叫附近司机</string>
+    <string name="accept_info">司机：%1$s(车牌:%2$s)已经接单,全程%3$.2f公里，%4$d分钟到达</string>
+    <string name="driving_info">司机：%1$s(车牌:%2$s)，行程中,还剩%3$.2f公里，%4$d分钟到达</string>
+    <string name="driver_arrive">司机：%1$s(车牌:%2$s)已经到达</string>
+    <string name="order_cancel_suc">取消成功</string>
+    <string name="order_cancel_error">取消失败</string>
+    <string name="pay">支付</string>
+    <string name="pay_info">行程结束，感谢您使用MyTaxi，你需支付¥ %1$.2f 。\n 司机：%2$s 车牌:%3$s</string>
+    <string name="cancel_fail">取消失败</string>
+    <string name="pay_suc">支付成功</string>
+    <string name="show_call_suc">已有司机收到请求</string>
+    <string name="show_call_fail">呼叫失败，稍后再试</string>
+    <string name="driver_arrive_pure">司机已到达</string>
+    <string name="canceling">订单取消中...</string>
+    <string name="service">客服</string>
+    <string name="order">订单</string>
+    <string name="feedback">反馈</string>
+    <string name="driver">司机：</string>
+    <string name="loading">加载中...</string>
+    <string name="price">¥ %1$.2f</string>
+    <string name="pls_login">请先登录</string>
+    <string name="driver_accept_order">司机接单了</string>
+    <string name="paying">支付中...</string>
+    <string name="pay_fail">支付失败</string>
+
 </resources>

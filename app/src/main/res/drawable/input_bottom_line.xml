@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- android:shape指定形状类型，默认为rectangle -->
+<layer-list  xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <item>
+        <shape android:shape="rectangle" >
+            <solid android:color="@color/text_gray" />
+
+            <corners
+                android:bottomLeftRadius="0px"
+                android:bottomRightRadius="0px"
+                android:topLeftRadius="0px"
+                android:topRightRadius="0px" />
+        </shape>
+    </item>
+    <item android:bottom="1dp">
+        <shape android:shape="rectangle" >
+            <solid android:color="#ffffff" />
+
+            <corners
+                android:bottomLeftRadius="0px"
+                android:bottomRightRadius="0px"
+                android:topLeftRadius="0px"
+                android:topRightRadius="0px" />
+        </shape>
+    </item>
+
+</layer-list >

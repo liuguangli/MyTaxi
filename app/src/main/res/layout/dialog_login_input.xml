@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/btn_close"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/activity_vertical_margin"
+            android:id="@+id/close"
+            />
+    </RelativeLayout>
+    <LinearLayout
+        android:padding="@dimen/activity_horizontal_margin"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/login"
+            android:id="@+id/dialog_title"
+            style="@style/Dialog.Title"
+            android:gravity="center_horizontal"
+
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_text_normal"
+                android:text="+86"
+                />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/pls_input_phone"
+                style="@style/Dialog.Input"
+                android:id="@+id/phone"
+                android:inputType="phone"
+                android:textColor="@color/color_text_normal"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            >
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/pls_input_pw"
+                style="@style/Dialog.Input"
+                android:id="@+id/password"
+                android:inputType="textPassword"
+                android:textColor="@color/color_text_normal"
+                />
+        </LinearLayout>
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/loading"
+            android:layout_gravity="center_horizontal"
+            style="@style/Loading"
+            android:visibility="gone"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="错误"
+            android:gravity="center"
+            android:textColor="@color/error_red"
+            android:id="@+id/tips"
+            android:visibility="gone"
+            android:padding="12dp"
+            style="@style/Tips"
+
+            />
+    </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login"
+        style="@style/Dialog.Button"
+        android:id="@+id/btn_confirm"
+        />
+
+</LinearLayout>
