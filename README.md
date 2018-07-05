@@ -113,9 +113,8 @@
 避免使用"px"作为单位。
 
 # 项目成员
-大利猫,陈海琼,orange,李松平,风筝与太阳,cpen5,JiannaiJ,赵竹子,周宇,机器人嘎嘎ing,小豪,棉棒糖,miyuexingchen,达螺丝，krido, zhanlu, vigroid, 
-SvenHe,黄武超,詹徐照, WemtFox,intozhou,T圈M_233,Jeanne,魏重熙,vidya,yuan,haoge728,Wubobo952,liwl.FUN,youngzm,QiangzhenZhu,faith,小许,weip
-
-
+大利猫,陈海琼,orange,李松平,风筝与太阳,cpen5,JiannaiJ,赵竹子,周宇,机器人嘎嘎ing,小豪,棉棒糖,miyuexingchen,达螺丝，krido, zhanlu, vigroid,
+SvenHe,黄武超,詹徐照, WemtFox,intozhou,T圈M_233,Jeanne,魏重熙,vidya,yuan,haoge728,Wubobo952,liwl.FUN,youngzm,QiangzhenZhu,faith,小许,
+liulan,kaixin052,weip
 
 
