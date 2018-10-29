@@ -23,6 +23,7 @@
             android:layout_gravity="center"
             android:focusable="true"
             android:src="@drawable/ic_logo"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
